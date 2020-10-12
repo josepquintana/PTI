@@ -7,11 +7,11 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get install -yq python3.7
 RUN echo "Python3.7 has been installed"
 
 
-RUN mkdir -p /usr/src/app
-WORKDIR /usr/src/app
+RUN mkdir -p /usr/src/pti
+WORKDIR /usr/src/pti
 COPY server.py .
 #RUN apt-get install somedependency
-#RUN pip install somedependecy
+RUN pip3.7 install flask
 EXPOSE 80
 EXPOSE 443
 CMD ["python3.7", "./server.py"]

@@ -1,6 +1,11 @@
+import ssl
 import json
+import smtplib
 import requests
 from flask import Flask, jsonify, request, render_template
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
 
 app = Flask(__name__)
 app.config["DEBUG"] = True
@@ -333,11 +338,56 @@ def page_not_found(error):
 
 	
 
+def send_mail(server_msg_text = "-- EMPTY MESSAGE --"):
+
+	context = ssl.create_default_context()
+	serverSMTP = smtplib.SMTP_SSL("josepquintana.me", "465", context=context)
+	serverSMTP.login("pti-server@josepquintana.me", "************")
+	
+	message = """\
+		<html>
+		<div id="pti-server-card" style="max-width:600px;background:#fdeddb;padding:20px;border-radius:10px">
+			<div>
+				<img src="https://i.imgur.com/Qg4Pzdi.jpg" width="600" height="auto" style="display:block;margin-bottom:37.5px" alt="header" tabindex="0">
+			</div>
+			<p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#333333;line-height:25px;margin:0 0 37.5px 0;max-width:600px">Hi there <b>Josep</b>,<br><br>You have a message:<br><br><code>{0}</code><br><br>Access the server by clicking the following link:</p>
+			<div style="display:block;max-width:600px;background:#a72020;padding:15px 40px 15px 40px;margin:0 0 37.5px 0;border-radius:50px;color:white;border:solid 1px black;font-size:15px;font-weight:bold;text-align:center;text-decoration:none"><a rel="noopener noreferrer" href="http://10.4.41.142" style="font-family:Helvetica,Arial,sans-serif;padding:7.5px 7.5px 7.5px 7.5px;color:white;letter-spacing:3px;vertical-align:baseline;text-decoration:none" target="_blank">ACCESS THE SERVER</a></div>
+			<table style="margin:0 0 37.5px 0">
+				<tbody>
+					<tr>
+						<td style="width:90%">
+							<p style="max-width:600px;font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#333333;margin:0;line-height:25px">Thank you and king <span style="color:#d47939;font-weight:bold">regards</span>,<br><br><span style="font-style:italic">PTI Server Team</span></p>
+						</td>
+						<td style="width:10%"><a rel="noopener noreferrer" href="https://josepquintana.me" target="_blank"><img src="https://josepquintana.me/icons/favicon.png" width="auto" height="64" style="display:block" alt="jq-logo"></a></td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		</html>
+		"""
+		
+	message = message.format(server_msg_text)
+		
+	mail = MIMEMultipart()
+	mail['From'] = "PTI-Server <pti-server@josepquintana.me>"
+	mail['To'] = "josepquintana44@gmail.com"
+	mail['Subject'] = "Subscription"
+	mail.attach(MIMEText(message, "html"))
+	
+	try:
+		serverSMTP.sendmail(mail['From'], mail['To'], mail.as_string())
+		response = { 'status': 'sent' }
+		
+	except smtplib.SMTPException as e:
+		response = { 'error': str(e) }
+		
+	return jsonify(response), 200
+
 if __name__ == '__main__':
     from argparse import ArgumentParser
 
     parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default=8080, type=int, help='port to listen on')
+    parser.add_argument('-p', '--port', default=80, type=int, help='port to listen on')
     args = parser.parse_args()
     port = args.port
 

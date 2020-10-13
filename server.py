@@ -5,6 +5,7 @@ from flask import Flask, jsonify, request, render_template
 app = Flask(__name__)
 app.config["DEBUG"] = True
 app.config['JSON_SORT_KEYS'] = False
+app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 
 
 

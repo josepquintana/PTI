@@ -47,12 +47,6 @@ RUN DEBIAN_FRONTEND=noninteractive make altinstall > /docker-build.log 2>&1
 RUN DEBIAN_FRONTEND=noninteractive curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
 RUN DEBIAN_FRONTEND=noninteractive python3.9 get-pip.py > /docker-build.log 2>&1
 
-# Old Python Installation for Ubuntu
-#   RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq software-properties-common
-#   RUN DEBIAN_FRONTEND=noninteractive add-apt-repository ppa:deadsnakes/ppa 
-#   RUN DEBIAN_FRONTEND=noninteractive apt-get update 
-#   RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq python3.7
-
 # Set working directory
 WORKDIR /srv/PTI
 

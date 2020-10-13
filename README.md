@@ -21,6 +21,7 @@ docker run --name pti_server -d -p 80:80 pti_server
 docker run -it --entrypoint bash pti_server
 ```
 
+
 ## Authors
 
 - Josep Quintana

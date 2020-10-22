@@ -3,9 +3,13 @@
 ## Build
 
 ```
+git fetch && git checkout origin/master -- <your_file_path>
+```
+```
 docker build -f Dockerfile_WEBSERVER --no-cache --progress=plain --secret id=id_rsa_pti_server,src=/home/jquintana/.ssh/id_rsa_pti_server -t pti_webserver . | more
+```
+```
 docker build -f Dockerfile_BLOCKHAIN --no-cache --progress=plain --secret id=id_rsa_pti_server,src=/home/jquintana/.ssh/id_rsa_pti_server -t pti_blockchain . | more
-
 ```
 
 
@@ -13,6 +17,8 @@ docker build -f Dockerfile_BLOCKHAIN --no-cache --progress=plain --secret id=id_
 
 ```
 docker run --name pti_webserver -d -p 80:80 pti_webserver
+```
+```
 docker run --name pti_blockchain -d -p 9999:9999 pti_blockchain
 ```
 
@@ -21,6 +27,9 @@ docker run --name pti_blockchain -d -p 9999:9999 pti_blockchain
 
 ```
 docker run -it --entrypoint bash pti_webserver
+```
+
+```
 docker run -it --entrypoint bash pti_blockchain
 ```
 
@@ -31,3 +40,11 @@ docker run -it --entrypoint bash pti_blockchain
 - Omar Elkassar
 - Nil Tosar
 - Josep Maria Canela
+
+
+## TO DO
+
+- [x] Dockerfile for Blockchain (truffle)
+- [] Simple API endpoint
+- [] Truffe Process start
+

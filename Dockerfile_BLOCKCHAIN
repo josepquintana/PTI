@@ -51,7 +51,7 @@ RUN DEBIAN_FRONTEND=noninteractive python3.9 get-pip.py > /docker-build.log 2>&1
 WORKDIR /srv/PTI
 
 RUN DEBIAN_FRONTEND=noninteractive pip3.9 install -q -r requirements.txt
-RUN echo "Ready to start server"
+RUN echo "Ready to start webserver"
 
 # COPY server.py .
 

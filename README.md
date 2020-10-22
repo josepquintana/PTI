@@ -3,6 +3,9 @@
 ## Build
 
 ```
+git fetch && git checkout origin/master -- <your_file_path>
+```
+```
 docker build -f Dockerfile_WEBSERVER --no-cache --progress=plain --secret id=id_rsa_pti_server,src=/home/jquintana/.ssh/id_rsa_pti_server -t pti_webserver . | more
 ```
 ```
@@ -44,3 +47,4 @@ docker run -it --entrypoint bash pti_blockchain
 - [x] Dockerfile for Blockchain (truffle)
 - [] Simple API endpoint
 - [] Truffe Process start
+

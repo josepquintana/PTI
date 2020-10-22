@@ -36,17 +36,25 @@ COPY --from=intermediate /PTI /srv/PTI
 # Install dependencies
 RUN DEBIAN_FRONTEND=noninteractive apt-get update > /docker-build.log 2>&1
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq curl apt-utils > /docker-build.log 2>&1
-RUN DEBIAN_FRONTEND=noninteractive curl -sL https://deb.nodesource.com/setup_15.x | bash -
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq nodejs
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq build-essential zlib1g-dev libncurses5-dev libgdbm-dev libnss3-dev libssl-dev libreadline-dev libffi-dev curl libbz2-dev > /docker-build.log 2>&1
+
+RUN DEBIAN_FRONTEND=noninteractive curl -O https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz
+RUN DEBIAN_FRONTEND=noninteractive tar -xzf Python-3.9.0.tgz
+WORKDIR Python-3.9.0
+RUN DEBIAN_FRONTEND=noninteractive ./configure --enable-optimizations --quiet > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive make -j 2 --quiet > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive make altinstall > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py
+RUN DEBIAN_FRONTEND=noninteractive python3.9 get-pip.py > /docker-build.log 2>&1
 
 # Set working directory
 WORKDIR /srv/PTI
 
-#RUN DEBIAN_FRONTEND=noninteractive pip3.9 install -q -r requirements.txt
-RUN echo "Ready to start blockchain"
+RUN DEBIAN_FRONTEND=noninteractive pip3.9 install -q -r requirements.txt
+RUN echo "Ready to start webserver"
+
+# COPY server.py .
 
 # Start the server command
-EXPOSE 9999
-#### CMD ["python3.9", "/srv/PTI/server.py", "-p 80"]
-
-
+EXPOSE 80
+CMD ["python3.9", "/srv/PTI/server.py", "-p 80"]

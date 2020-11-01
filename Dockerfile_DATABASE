@@ -1,0 +1,49 @@
+# syntax = docker/dockerfile:1.0-experimental
+
+# First build stage, it will not persist in the final image
+FROM debian as intermediate
+
+# Me
+MAINTAINER Josep Quintana
+
+RUN echo "Log file: /docker-build.log"
+
+# Install git
+RUN DEBIAN_FRONTEND=noninteractive apt-get update > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq git > /docker-build.log 2>&1
+
+# Add credentials on this first build
+RUN mkdir /root/.ssh/
+RUN --mount=type=secret,id=id_rsa_pti_server cat /run/secrets/id_rsa_pti_server > /root/.ssh/id_rsa
+RUN chmod 600 /root/.ssh/id_rsa
+
+# Make sure the Github domain is accepted
+RUN touch /root/.ssh/known_hosts
+RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
+
+# Clone the Github repository
+RUN git clone git@github.com:josepquintana/PTI.git
+
+# Final Image, where the repository from the previous image is copied to
+FROM debian AS final
+RUN mkdir -p /srv/PTI
+COPY --from=intermediate /PTI /srv/PTI
+
+# Install MongoDB
+RUN DEBIAN_FRONTEND=noninteractive apt-get update > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq wget gnupg > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add - > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive apt-get update > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq mongodb-org > /docker-build.log 2>&1
+
+# Set working directory
+WORKDIR /srv/PTI
+
+RUN echo "Ready to start database"
+
+# Start the database command
+EXPOSE 27017
+CMD ["systemctl", "start mongod"]
+
+

@@ -29,21 +29,21 @@ FROM debian AS final
 RUN mkdir -p /srv/PTI
 COPY --from=intermediate /PTI /srv/PTI
 
-# Install dependencies
+# Install MongoDB
 RUN DEBIAN_FRONTEND=noninteractive apt-get update > /docker-build.log 2>&1
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq curl apt-utils > /docker-build.log 2>&1
-RUN DEBIAN_FRONTEND=noninteractive curl -sL https://deb.nodesource.com/setup_15.x | bash - > /docker-build.log 2>&1
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq nodejs > /docker-build.log 2>&1
-RUN DEBIAN_FRONTEND=noninteractive npm install -g truffle > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq wget gnupg > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive wget -qO - https://www.mongodb.org/static/pgp/server-4.4.asc | sudo apt-key add - > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive echo "deb http://repo.mongodb.org/apt/debian buster/mongodb-org/4.4 main" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.4.list > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive apt-get update > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq mongodb-org > /docker-build.log 2>&1
 
 # Set working directory
 WORKDIR /srv/PTI
 
-#RUN DEBIAN_FRONTEND=noninteractive pip3.9 install -q -r requirements.txt
-RUN echo "Ready to start blockchain"
+RUN echo "Ready to start database"
 
-# Start the server command
-EXPOSE 9999
-#### CMD ["python3.9", "/srv/PTI/server.py", "-p 80"]
+# Start the database command
+EXPOSE 27017
+CMD ["systemctl", "start mongod"]
 
 

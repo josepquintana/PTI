@@ -1,9 +1,18 @@
 # Projecte de Tecnologies de la Informació
 
 ## Environment
+
+### Add SSH Key to the ssh-agent
+```
+eval $(ssh-agent -s)
+ssh-add ~/.ssh/id_rsa_pti_server
+```
+
 ### Fetch a single file from Github
 ```
-git fetch && git checkout origin/master -- <your_file_path>
+git fetch && git checkout origin/master -- Dockerfile_WEBSERVER
+git fetch && git checkout origin/master -- Dockerfile_BLOCKCHAIN
+git fetch && git checkout origin/master -- Dockerfile_DATABASE
 ```
 
 ## Build

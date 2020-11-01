@@ -25,6 +25,8 @@ docker build -f Dockerfile_BLOCKCHAIN --no-cache --progress=plain --secret id=id
 ```
 ```
 docker build -f Dockerfile_DATABASE --no-cache --progress=plain --secret id=id_rsa_pti_server,src=/home/jquintana/.ssh/id_rsa_pti_server -t pti_database . | more
+[OR]
+docker run -d -p 27017:27017 --name mongodb mongo:4.4
 ```
 
 ## Run

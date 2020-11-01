@@ -67,7 +67,7 @@ def home():
     else:
         return render_template("index.html")
 
-@app.route('/api/v1/', methods=['GET'])
+@app.route('/api/v1', methods=['GET'])
 def api_root():
     response = {
         "msg": "API root path",
@@ -76,20 +76,23 @@ def api_root():
     }
     return jsonify(response), 200
 
+# API -> List all bids
 @app.route('/api/v1/bids/list', methods=['GET'])
 def api_bids_list():
     response = bidsCollection.find()
-    return jsonify(response), 200
+    return response, 200
 
+# API -> List bids buying <CURRENCY>
 @app.route('/api/v1/bids/list/buy/<currency>', methods=['GET'])
 def api_bids_list_buy_currency(currency):
     response = bidsCollection.find({ "buy_currency": currency })
-    return jsonify(response), 200
+    return response, 200
 
+# API -> List bids selling <CURRENCY>
 @app.route('/api/v1/bids/list/sell/<currency>', methods=['GET'])
 def api_bids_list_sell_currency(currency):
     response = bidsCollection.find({ "sell_currency": currency })
-    return jsonify(response), 200
+    return response, 200
 
 
 @app.route('/info', methods=['GET'])

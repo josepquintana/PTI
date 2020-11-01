@@ -8,6 +8,27 @@ TODO:
 	method: 	POST
 	variables:	sender, receiver, amount, price
 
+
+
+
+
+
+	API endpoints:
+	
+	/api/v1 ->
+		/transactions ->
+			/new
+			
+		/bids/ ->
+			/new
+            /list
+			
+		/users ->
+	
+
+
+
+
 """
 #############################################################################################################################################################
 #############################################################################################################################################################
@@ -22,16 +43,24 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder='www/templates', static_url_path='', static_folder='www/static')
 app.config["DEBUG"] = True
 app.config['JSON_SORT_KEYS'] = False
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
+# app.config['SERVER_NAME'] = website_url 
 
 
-
-@app.route('/', methods=['GET'])
+@app.route('/', methods=['GET', 'POST'])
 def home():
-    return "<h1>Projecte de Tecnologies de la Informació</h1><p>Welcome to the <NAME> Web API</p>"
+    if request.method == 'POST':
+        response = { 
+            'msg': 'Welcome to the <NAME> website',
+            'org': 'Projecte de Tecnologies de la Informació'
+        }
+        return jsonify(response), 200
+        
+    else:
+        return render_template("index.html")
 
 
 
@@ -47,7 +76,6 @@ def info():
     }
 	
     return jsonify(response), 200
-
 
 
 @app.route('/ip', methods=['GET'])
@@ -342,14 +370,39 @@ def random():
 
 
 
+#############################################################################################################################################################
+""" ERROR HANDLERS """
+#############################################################################################################################################################
+
+@app.errorhandler(400)
+def error_handler_400(error):
+	response = { 'error': '400', 'msg': 'Bad Request' }
+	return jsonify(response), 400
+
+@app.errorhandler(401)
+def error_handler_401(error):
+	response = { 'error': '401', 'msg': 'Unauthorized' }
+	return jsonify(response), 401
+
+@app.errorhandler(403)
+def error_handler_403(error):
+	response = { 'error': '403', 'msg': 'Forbidden' }
+	return jsonify(response), 403
+
 @app.errorhandler(404)
-def page_not_found(error):
-	response = { 
-		'error': '404',
-		'msg': 'Page not found'
-	}
-	
+def error_handler_404(error):
+	response = { 'error': '404', 'msg': 'Not Found' }
 	return jsonify(response), 404
+	
+@app.errorhandler(405)
+def error_handler_405(error):
+	response = { 'error': '405', 'msg': 'Method Not Allowed' }
+	return jsonify(response), 405
+
+@app.errorhandler(429)
+def error_handler_429(error):
+	response = { 'error': '429', 'msg': 'Too Many Requests' }
+	return jsonify(response), 429
 
 	
 
@@ -406,9 +459,50 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--port', default=80, type=int, help='port to listen on')
     args = parser.parse_args()
     port = args.port
-
+	
     app.run(host='0.0.0.0', port=port)
 	# app.run()
 	
 	
+    
+#############################################################################################################################################################
+#############################################################################################################################################################
+"""
+
+
+@app.route('/success/<name>')
+def success(name):
+   return 'welcome %s' % name
+
+@app.route('/login',methods = ['POST', 'GET'])
+def login():
+   if request.method == 'POST':
+      user = request.form['nm']
+      return redirect(url_for('success',name = user))
+   else:
+      user = request.args.get('nm')
+      return redirect(url_for('success',name = user))
+      
+      
+      
+
+
+@app.route("/kakut", subdomain="static")
+def static_index():
+    # Flask supports static subdomains
+    # This is available at static.your-domain.tld
+    return "static.your-domain.tld"
+
+
+@app.route("/dynamic", subdomain="<username>")
+def username_index(username):
+    # Dynamic subdomains are also supported
+    # Try going to user1.your-domain.tld/dynamic
+    return username + ".your-domain.tld"
+
+
+
 	
+"""	
+#############################################################################################################################################################
+#############################################################################################################################################################

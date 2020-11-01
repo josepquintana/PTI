@@ -47,4 +47,7 @@ docker run -it --entrypoint bash pti_blockchain
 - [x] Dockerfile for Blockchain (truffle)
 - [] Simple API endpoint
 - [] Truffe Process start
+- [] Use Docker Hub
+- [] IPFS
+- [] Private Blockchain
 

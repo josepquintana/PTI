@@ -1,0 +1,35 @@
+
+0x103e734337a86e6c92fEf0E69D382c78990f5c4B
+
+0x9835a86c177e416EECC3E467d94e2F65B0004b86
+
+
+
+
+
+
+{
+	"config": {
+		"chainId": 2019,
+		"homesteadBlock": 0,
+		"eip150Block": 0,
+		"eip155Block": 0,
+		"eip158Block": 0,
+		"byzantiumBlock": 0,
+		"constantinopleBlock": 0,
+		"petersburgBlock": 0,
+		"ethash": {}
+	},
+	"difficulty": "400",
+	"gasLimit": "2000000",
+	"alloc": {
+		"103e734337a86e6c92fEf0E69D382c78990f5c4B": {  
+			"balance": "100000000000000000000000"
+		},
+		"9835a86c177e416EECC3E467d94e2F65B0004b86": { 
+			"balance": "120000000000000000000000" 
+		}
+	}
+}
+
+

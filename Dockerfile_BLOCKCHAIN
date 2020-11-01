@@ -13,10 +13,6 @@ RUN DEBIAN_FRONTEND=noninteractive apt-get update > /docker-build.log 2>&1
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq git > /docker-build.log 2>&1
 
 # Add credentials on this first build
-#   OLD: [--build-arg SSH_PRIVATE_KEY="$(cat ~/.ssh/id_rsa_pti_server)"]
-#     ARG SSH_PRIVATE_KEY
-#     RUN echo "${SSH_PRIVATE_KEY}" > /root/.ssh/id_rsa
-#
 RUN mkdir /root/.ssh/
 RUN --mount=type=secret,id=id_rsa_pti_server cat /run/secrets/id_rsa_pti_server > /root/.ssh/id_rsa
 RUN chmod 600 /root/.ssh/id_rsa
@@ -36,8 +32,9 @@ COPY --from=intermediate /PTI /srv/PTI
 # Install dependencies
 RUN DEBIAN_FRONTEND=noninteractive apt-get update > /docker-build.log 2>&1
 RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq curl apt-utils > /docker-build.log 2>&1
-RUN DEBIAN_FRONTEND=noninteractive curl -sL https://deb.nodesource.com/setup_15.x | bash -
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq nodejs
+RUN DEBIAN_FRONTEND=noninteractive curl -sL https://deb.nodesource.com/setup_15.x | bash - > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq nodejs > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive npm install -g truffle > /docker-build.log 2>&1
 
 # Set working directory
 WORKDIR /srv/PTI

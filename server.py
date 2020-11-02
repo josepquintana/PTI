@@ -11,6 +11,10 @@ TODO:
     
     - API_key for each user
     
+    - Check that the user's new bid is not duplicated
+    - Check that the newly created bid sell_amount is payable by the owner
+    - When a user accepts a bid, check that his own bids are still payable otherwise delete them from the db
+    
 """
 
 """
@@ -41,6 +45,7 @@ import smtplib
 import requests
 import pymongo
 from bson import json_util
+from datetime import datetime
 from flask import Flask, jsonify, request, abort, render_template
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -90,6 +95,20 @@ def api_root():
     return jsonify(response), 200
 
 # API -> New bid
+@app.route('/qqq', methods=['POST'])
+def api_bids_new_2():
+     for p in request.form: 
+        print(p)
+        
+     for p in request.values: 
+        print(p)
+        
+     #for p in request.json: 
+        #print(p)
+        
+     return "OK", 200
+
+# API -> New bid
 @app.route('/api/v1/bids/new', methods=['POST'])
 def api_bids_new():
     # Available Cryptocurrencies
@@ -97,7 +116,7 @@ def api_bids_new():
 
     # Get username/wallet according to the provided API_KEY
     # <PROVISIONAL FOR DEV MODE>
-    API_KEY = request.form.get("API_KEY", type = str)
+    API_KEY = request.form.get("API_KEY", type = str) # Do not set Header application/json !
     validApiKeys = {
         "0000": "jquintana",
         "1111": "trader1",
@@ -107,6 +126,7 @@ def api_bids_new():
     
     if API_KEY in validApiKeys:
         username = validApiKeys.get(API_KEY)
+        print(f"Username: ", username)
     else:
         abort(401)
     # </PROVISIONAL FOR DEV MODE>
@@ -129,25 +149,30 @@ def api_bids_new():
     
     # Insert a new Document to the DB
     # TODO: Check if it already exists
-    newBid = { "owner": username, "buy_amount": buy_amount, "buy_currency": buy_currency, "sell_amount": sell_amount, "sell_currency": sell_currency},
+    newBid = { "owner": username, "buy_amount": buy_amount, "buy_currency": buy_currency, "sell_amount": sell_amount, "sell_currency": sell_currency}
     insertedBid = bidsCollection.insert_one(newBid)
 
     print(insertedBid.inserted_id)
-    
-	response = { 
-		'test': 'okay',
-		'path': '/test/' + dir,
-		'method': request.method,
-		'GET_var': request.args.get("var", default = "", type = str),
-		'POST_var': request.form.get("var", default = "", type = str)
+       
+    response = { 
+		'bid': 'created',
+		'data': { 
+            'owner': username, 
+            "buy_amount": buy_amount,
+            "buy_currency": buy_currency,
+            "sell_amount": sell_amount, 
+            "sell_currency": sell_currency
+        },
+        'server_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 	}
-	return jsonify(response), 200
+    
+    return jsonify(response), 201
 
-
+    
 # API -> List all bids
 @app.route('/api/v1/bids/list', methods=['GET'])
 def api_bids_list():
-db_query = bidsCollection.find({}, { "_id": 0 }).sort("owner")
+    db_query = bidsCollection.find({}, { "_id": 0 }).sort("owner")
     response = bson.json_util.dumps({ "bids": list(db_query) }, indent = 2)
     return response, 200
 

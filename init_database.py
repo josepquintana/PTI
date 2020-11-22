@@ -28,11 +28,11 @@ newBids = [
 x = bidsCollection.insert_many(newBids)
 print(f"Inserted ids:  {x.inserted_ids}")
 
+# Output messages
 print("BIDS:")
 for x in bidsCollection.find({}, { "something": 0 }):
     print(x)
 
-# Output messages (won't work, there's no content stored)
 databaseList = mongoClient.list_database_names()
 if "DB_PTI" in databaseList:
     print("The database has been created.")

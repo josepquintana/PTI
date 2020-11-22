@@ -15,6 +15,13 @@ TODO:
     - Check that the newly created bid sell_amount is payable by the owner
     - When a user accepts a bid, check that his own bids are still payable otherwise delete them from the db
     
+    
+    
+    
+    curl 10.4.41.142/api/v1/bids/list/BTC/ETH
+    
+    add ID field to database
+    
 """
 
 """
@@ -33,6 +40,21 @@ API endpoints:
             /owner/<USER>
 		
 	/users ->
+    
+    
+    
+    
+    
+TESTING:
+
+/test ->
+    /mongo
+    /ganache
+        
+INFO:
+
+/info ->
+    /
 	
 """
 #############################################################################################################################################################
@@ -58,7 +80,7 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 # app.config['SERVER_NAME'] = website_url 
 
 # MongoDB configuration
-mongoClient = pymongo.MongoClient("mongodb://localhost:27017")
+mongoClient = pymongo.MongoClient("mongodb://10.4.41.142:27017")
 pti_Database = mongoClient["DB_PTI"]
 bidsCollection = pti_Database["bids"]
 
@@ -93,20 +115,6 @@ def api_root():
         "version": "1"
     }
     return jsonify(response), 200
-
-# API -> New bid
-@app.route('/qqq', methods=['POST'])
-def api_bids_new_2():
-     for p in request.form: 
-        print(p)
-        
-     for p in request.values: 
-        print(p)
-        
-     #for p in request.json: 
-        #print(p)
-        
-     return "OK", 200
 
 # API -> New bid
 @app.route('/api/v1/bids/new', methods=['POST'])
@@ -192,7 +200,7 @@ def api_bids_list_buy_currency(currency, min_amount):
 @app.route('/api/v1/bids/list/sell/<currency>/<min_amount>', methods=['GET'])
 def api_bids_list_sell_currency(currency, min_amount):
     if is_int(min_amount):
-        db_query = bidsCollection.find({ "sell_currency": currency, "sell_amount": { "$gte": int(min_amount) } }, { "_id": 0 }).sort("owner")
+        db_query = bidsCollection.find({ "sell_currency": currency, "sell_amount": { "$gte": int(min_amount) }}, { "_id": 0 }).sort("owner")
         response = bson.json_util.dumps({ "bids": list(db_query) }, indent = 2)
         return response, 200
     else:
@@ -210,6 +218,28 @@ def api_bids_list_owner(user):
 """ API TEST ENDPOINTS """
 #############################################################################################################################################################
 
+@app.route('/test', defaults={"dir": ""}, methods=['GET', 'POST'] )
+@app.route('/test/1/<dir>', methods=['GET', 'POST'])
+def test(dir):
+	response = { 
+		'test': 'okay',
+		'path': '/test/' + dir,
+		'method': request.method,
+		'GET_var': request.args.get("var", default = "", type = str),
+		'POST_var': request.form.get("var", default = "", type = str)
+	}
+		
+	return jsonify(response), 200
+
+
+@app.route('/test/mongo', methods=['GET'])
+def test_mongo():
+    return mongoClient.server_info(), 200
+
+#############################################################################################################################################################
+""" API INFO ENDPOINTS """
+#############################################################################################################################################################
+
 @app.route('/info', methods=['GET'])
 def info():
     response = {
@@ -224,7 +254,7 @@ def info():
     return jsonify(response), 200
 
 
-@app.route('/ip', methods=['GET'])
+@app.route('/info/ip', methods=['GET'])
 def ip():
 
 	pload = {"requested_with": "xmlhttprequest", "lang": request.args.get("lang", default = "en", type = str)}
@@ -237,7 +267,7 @@ def ip():
 	return jsonify(response), 200
 
 
-@app.route('/weather', methods=['GET'])
+@app.route('/info/weather', methods=['GET'])
 def weather():
 	pload1 = {"requested_with": "xmlhttprequest", "lang": request.args.get("lang", default = "en", type = str)}
 	req1 = requests.post('https://josepquintana.me/ip-tool/run.php', headers = {"referer": "https://josepquintana.me/"}, data = pload1)
@@ -255,20 +285,6 @@ def weather():
 
 	return jsonify(response), 200
 	
-
-@app.route('/test', defaults={"dir": ""}, methods=['GET', 'POST'] )
-@app.route('/test/<dir>', methods=['GET', 'POST'])
-def test(dir):
-	response = { 
-		'test': 'okay',
-		'path': '/test/' + dir,
-		'method': request.method,
-		'GET_var': request.args.get("var", default = "", type = str),
-		'POST_var': request.form.get("var", default = "", type = str)
-	}
-		
-	return jsonify(response), 200
-
 
 #############################################################################################################################################################
 """ AUX FUNCTIONS """
@@ -327,6 +343,9 @@ def error_handler_429(error):
 	return jsonify(response), 429
 
 	
+#############################################################################################################################################################
+""" SEND EMAIL """
+#############################################################################################################################################################
 
 def send_mail(server_msg_text = "-- EMPTY MESSAGE --"):
 
@@ -373,6 +392,11 @@ def send_mail(server_msg_text = "-- EMPTY MESSAGE --"):
 		
 	return jsonify(response), 200
 	
+    
+#############################################################################################################################################################
+""" MAIN ENTRY POINT """
+#############################################################################################################################################################
+
 
 if __name__ == '__main__':
     from argparse import ArgumentParser

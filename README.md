@@ -10,23 +10,21 @@ ssh-add ~/.ssh/id_rsa_pti_server
 
 ### Fetch a single file from Github
 ```
-git fetch && git checkout origin/master -- Dockerfile_WEBSERVER
-git fetch && git checkout origin/master -- Dockerfile_BLOCKCHAIN
-git fetch && git checkout origin/master -- Dockerfile_DATABASE
+git fetch && git checkout origin/master -- ./webserver/Dockerfile_WEBSERVER
+git fetch && git checkout origin/master -- ./blockchain/Dockerfile_BLOCKCHAIN
+git fetch && git checkout origin/master -- ./database/Dockerfile_DATABASE
 ```
 
 ## Build
 
 ```
-docker build -f Dockerfile_WEBSERVER --no-cache --progress=plain --secret id=id_rsa_pti_server,src=/home/jquintana/.ssh/id_rsa_pti_server -t pti_webserver . | more
+docker build -f ./webserver/Dockerfile_WEBSERVER --no-cache --progress=plain --secret id=id_rsa_pti_server,src=/home/jquintana/.ssh/id_rsa_pti_server -t pti_webserver . | more
 ```
 ```
-docker build -f Dockerfile_BLOCKCHAIN --no-cache --progress=plain -t pti_blockchain . | more
+docker build -f ./blockchain/Dockerfile_BLOCKCHAIN --no-cache --progress=plain -t pti_blockchain . | more
 ```
 ```
-docker build -f Dockerfile_DATABASE --no-cache --progress=plain --secret id=id_rsa_pti_server,src=/home/jquintana/.ssh/id_rsa_pti_server -t pti_database . | more
-[OR]
-docker run -d -p 27017:27017 --name mongodb mongo:4.4
+docker build -f ./database/Dockerfile_DATABASE --no-cache --progress=plain -t pti_database . | more
 ```
 
 ## Run
@@ -42,22 +40,16 @@ docker run --name pti_database -d -p 27017:27017 pti_database
 ```
 
 
-## Enter Container
+## Enter Container interactively
 
 ```
-docker run -it --entrypoint bash pti_webserver
-```
-```
-docker run -it --entrypoint bash pti_blockchain
-```
-```
-docker run -it --entrypoint bash pti_database
+docker run -it --entrypoint bash <containerName>
 ```
 
 ## Check Docker logs
 
 ```
-docker logs pti_blockchain
+docker logs <containerName>
 ```
 
 ## Copy from docker container to host

@@ -1,49 +1,12 @@
-# syntax = docker/dockerfile:1.0-experimental
-
-# First build stage, it will not persist in the final image
-FROM debian as intermediate
+# Final build using Ganache-CLI image
+FROM trufflesuite/ganache-cli:v6.12.1
 
 # Me
 MAINTAINER Josep Quintana
 
-RUN echo "Log file: /docker-build.log"
-
-# Install git
-RUN DEBIAN_FRONTEND=noninteractive apt-get update > /docker-build.log 2>&1
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq git > /docker-build.log 2>&1
-
-# Add credentials on this first build
-RUN mkdir /root/.ssh/
-RUN --mount=type=secret,id=id_rsa_pti_server cat /run/secrets/id_rsa_pti_server > /root/.ssh/id_rsa
-RUN chmod 600 /root/.ssh/id_rsa
-
-# Make sure the Github domain is accepted
-RUN touch /root/.ssh/known_hosts
-RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
-
-# Clone the Github repository
-RUN git clone git@github.com:josepquintana/PTI.git
-
-# Final Image, where the repository from the previous image is copied to
-FROM debian AS final
-RUN mkdir -p /srv/PTI
-COPY --from=intermediate /PTI /srv/PTI
-
-# Install dependencies
-RUN DEBIAN_FRONTEND=noninteractive apt-get update > /docker-build.log 2>&1
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq curl apt-utils > /docker-build.log 2>&1
-RUN DEBIAN_FRONTEND=noninteractive curl -sL https://deb.nodesource.com/setup_15.x | bash - > /docker-build.log 2>&1
-RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq nodejs > /docker-build.log 2>&1
-RUN DEBIAN_FRONTEND=noninteractive npm install -g truffle > /docker-build.log 2>&1
-
-# Set working directory
-WORKDIR /srv/PTI
-
-#RUN DEBIAN_FRONTEND=noninteractive pip3.9 install -q -r requirements.txt
 RUN echo "Ready to start blockchain"
 
-# Start the server command
-EXPOSE 9999
-#### CMD ["python3.9", "/srv/PTI/server.py", "-p 80"]
-
-
+# Start the ganache-cli blockchain command
+EXPOSE 8545
+RUN mkdir -p /ganache_database
+CMD ["ganache-cli", "--port", "8545", "--host", "0.0.0.0", "--networkId", "5777", "--accounts", "10", "--deterministic", "--db", "./ganache_database", "--acctKeys", "./ganache_accounts.json"]

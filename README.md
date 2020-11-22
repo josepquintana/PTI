@@ -21,7 +21,7 @@ git fetch && git checkout origin/master -- Dockerfile_DATABASE
 docker build -f Dockerfile_WEBSERVER --no-cache --progress=plain --secret id=id_rsa_pti_server,src=/home/jquintana/.ssh/id_rsa_pti_server -t pti_webserver . | more
 ```
 ```
-docker build -f Dockerfile_BLOCKCHAIN --no-cache --progress=plain --secret id=id_rsa_pti_server,src=/home/jquintana/.ssh/id_rsa_pti_server -t pti_blockchain . | more
+docker build -f Dockerfile_BLOCKCHAIN --no-cache --progress=plain -t pti_blockchain . | more
 ```
 ```
 docker build -f Dockerfile_DATABASE --no-cache --progress=plain --secret id=id_rsa_pti_server,src=/home/jquintana/.ssh/id_rsa_pti_server -t pti_database . | more
@@ -35,7 +35,7 @@ docker run -d -p 27017:27017 --name mongodb mongo:4.4
 docker run --name pti_webserver -d -p 80:80 pti_webserver
 ```
 ```
-docker run --name pti_blockchain -d -p 9999:9999 pti_blockchain
+docker run --name pti_blockchain -d -p 8545:8545 pti_blockchain
 ```
 ```
 docker run --name pti_database -d -p 27017:27017 pti_database
@@ -54,6 +54,17 @@ docker run -it --entrypoint bash pti_blockchain
 docker run -it --entrypoint bash pti_database
 ```
 
+## Check Docker logs
+
+```
+docker logs pti_blockchain
+```
+
+## Copy from docker container to host
+
+```
+docker cp <containerId>:/file/path/within/container /host/path/target
+```
 
 ## Authors
 

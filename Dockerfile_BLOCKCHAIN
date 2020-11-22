@@ -4,9 +4,13 @@ FROM trufflesuite/ganache-cli:v6.12.1
 # Me
 MAINTAINER Josep Quintana
 
+# Set working directory
+WORKDIR /PTI
+
+# Dependencies
+RUN mkdir -p /PTI/ganache_database
 RUN echo "Ready to start blockchain"
 
 # Start the ganache-cli blockchain command
 EXPOSE 8545
-RUN mkdir -p /ganache_database
 CMD ["ganache-cli", "--port", "8545", "--host", "0.0.0.0", "--networkId", "5777", "--accounts", "10", "--deterministic", "--db", "./ganache_database", "--acctKeys", "./ganache_accounts.json"]

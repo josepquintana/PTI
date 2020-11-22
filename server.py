@@ -4,42 +4,49 @@
 
 TODO:
 
-	endpoint:	10.4.41.142:80/transaction/new
-	method: 	POST
-	variables:	sender, receiver, amount, price
+	- endpoint:	
+        url:        10.4.41.142:80/transaction/new
+        method: 	POST
+        variables:	sender, receiver, amount, price
+    
+    - API_key for each user
+    
+    - Check that the user's new bid is not duplicated
+    - Check that the newly created bid sell_amount is payable by the owner
+    - When a user accepts a bid, check that his own bids are still payable otherwise delete them from the db
+    
+"""
 
+"""
 
+API endpoints:
 
-
-
-
-	API endpoints:
+/api/v1 ->
+	/transactions ->
+		/new
+		
+	/bids/ ->
+		/new
+        /list ->
+            /buy/<CURRENCY>[/<MIN_AMOUNT>]
+            /sell/<CURRENCY>[/<MIN_AMOUNT>]
+            /owner/<USER>
+		
+	/users ->
 	
-	/api/v1 ->
-		/transactions ->
-			/new
-			
-		/bids/ ->
-			/new
-            /list
-			
-		/users ->
-	
-
-
-
-
 """
 #############################################################################################################################################################
 #############################################################################################################################################################
 
-
 import ssl
 import json
+import bson
 import smtplib
 import requests
 import pymongo
-from flask import Flask, jsonify, request, render_template
+from bson import json_util
+from datetime import datetime
+from flask import Flask, jsonify, request, abort, render_template
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -55,6 +62,11 @@ mongoClient = pymongo.MongoClient("mongodb://localhost:27017")
 pti_Database = mongoClient["DB_PTI"]
 bidsCollection = pti_Database["bids"]
 
+
+#############################################################################################################################################################
+""" MAIN WEBSITE """
+#############################################################################################################################################################
+
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
@@ -67,6 +79,12 @@ def home():
     else:
         return render_template("index.html")
 
+
+#############################################################################################################################################################
+""" API ENDPOINTS """
+#############################################################################################################################################################
+
+# API -> Root
 @app.route('/api/v1', methods=['GET'])
 def api_root():
     response = {
@@ -76,24 +94,121 @@ def api_root():
     }
     return jsonify(response), 200
 
+# API -> New bid
+@app.route('/qqq', methods=['POST'])
+def api_bids_new_2():
+     for p in request.form: 
+        print(p)
+        
+     for p in request.values: 
+        print(p)
+        
+     #for p in request.json: 
+        #print(p)
+        
+     return "OK", 200
+
+# API -> New bid
+@app.route('/api/v1/bids/new', methods=['POST'])
+def api_bids_new():
+    # Available Cryptocurrencies
+    availableCryptocurrencies = {"BTC", "ETH", "LTC", "DAI"}
+
+    # Get username/wallet according to the provided API_KEY
+    # <PROVISIONAL FOR DEV MODE>
+    API_KEY = request.form.get("API_KEY", type = str) # Do not set Header application/json !
+    validApiKeys = {
+        "0000": "jquintana",
+        "1111": "trader1",
+        "2222": "trader2",
+        "3333": "trader3"
+    }
+    
+    if API_KEY in validApiKeys:
+        username = validApiKeys.get(API_KEY)
+        print(f"Username: ", username)
+    else:
+        abort(401)
+    # </PROVISIONAL FOR DEV MODE>
+    
+    # Fetch the rest of POST parameters
+    buy_amount      = request.form.get("buy_amount", type = int)
+    buy_currency    = request.form.get("buy_currency", type = str)
+    sell_amount     = request.form.get("sell_amount", type = int)
+    sell_currency   = request.form.get("sell_currency", type = str)
+    
+    # Check if specified parameters are valid
+    if buy_amount is None or buy_currency is None or sell_amount is None or sell_currency is None:
+        abort(400)
+    
+    if not is_int(buy_amount) or buy_amount < 0 or not is_int(sell_amount) or sell_amount < 0:
+        abort(400)
+        
+    if not buy_currency in availableCryptocurrencies or not sell_currency in availableCryptocurrencies:
+        abort(422)
+    
+    # Insert a new Document to the DB
+    # TODO: Check if it already exists
+    newBid = { "owner": username, "buy_amount": buy_amount, "buy_currency": buy_currency, "sell_amount": sell_amount, "sell_currency": sell_currency}
+    insertedBid = bidsCollection.insert_one(newBid)
+
+    print(insertedBid.inserted_id)
+       
+    response = { 
+		'bid': 'created',
+		'data': { 
+            'owner': username, 
+            "buy_amount": buy_amount,
+            "buy_currency": buy_currency,
+            "sell_amount": sell_amount, 
+            "sell_currency": sell_currency
+        },
+        'server_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	}
+    
+    return jsonify(response), 201
+
+    
 # API -> List all bids
 @app.route('/api/v1/bids/list', methods=['GET'])
 def api_bids_list():
-    response = bidsCollection.find()
+    db_query = bidsCollection.find({}, { "_id": 0 }).sort("owner")
+    response = bson.json_util.dumps({ "bids": list(db_query) }, indent = 2)
     return response, 200
 
-# API -> List bids buying <CURRENCY>
-@app.route('/api/v1/bids/list/buy/<currency>', methods=['GET'])
-def api_bids_list_buy_currency(currency):
-    response = bidsCollection.find({ "buy_currency": currency })
+# API -> List bids buying <CURRENCY> [at least <MIN_AMOUNT]
+@app.route('/api/v1/bids/list/buy/<currency>', defaults={"min_amount": 0}, methods=['GET'] )
+@app.route('/api/v1/bids/list/buy/<currency>/<min_amount>', methods=['GET'])
+def api_bids_list_buy_currency(currency, min_amount):
+    if is_int(min_amount):
+        db_query = bidsCollection.find({ "buy_currency": currency, "buy_amount": { "$gte": int(min_amount) } }, { "_id": 0 }).sort("owner")   
+        response = bson.json_util.dumps({ "bids": list(db_query) }, indent = 2)
+        return response, 200
+    else:
+        abort(400)
+
+# API -> List bids selling <CURRENCY> [at least <MIN_AMOUNT]
+@app.route('/api/v1/bids/list/sell/<currency>', defaults={"min_amount": 0}, methods=['GET'] )
+@app.route('/api/v1/bids/list/sell/<currency>/<min_amount>', methods=['GET'])
+def api_bids_list_sell_currency(currency, min_amount):
+    if is_int(min_amount):
+        db_query = bidsCollection.find({ "sell_currency": currency, "sell_amount": { "$gte": int(min_amount) } }, { "_id": 0 }).sort("owner")
+        response = bson.json_util.dumps({ "bids": list(db_query) }, indent = 2)
+        return response, 200
+    else:
+        abort(400)
+
+# API -> List bids made by <USER>
+@app.route('/api/v1/bids/list/owner/<user>', methods=['GET'])
+def api_bids_list_owner(user):
+    db_query = bidsCollection.find({ "owner": user }, { "_id": 0 }).sort("owner")
+    response = bson.json_util.dumps({ "bids": list(db_query) }, indent = 2)
     return response, 200
 
-# API -> List bids selling <CURRENCY>
-@app.route('/api/v1/bids/list/sell/<currency>', methods=['GET'])
-def api_bids_list_sell_currency(currency):
-    response = bidsCollection.find({ "sell_currency": currency })
-    return response, 200
 
+#############################################################################################################################################################
+""" API TEST ENDPOINTS """
+#############################################################################################################################################################
 
 @app.route('/info', methods=['GET'])
 def info():
@@ -122,7 +237,6 @@ def ip():
 	return jsonify(response), 200
 
 
-
 @app.route('/weather', methods=['GET'])
 def weather():
 	pload1 = {"requested_with": "xmlhttprequest", "lang": request.args.get("lang", default = "en", type = str)}
@@ -142,22 +256,12 @@ def weather():
 	return jsonify(response), 200
 	
 
-
-@app.route('/test', methods=['GET'])
-def test_welcome():
-	response = { 
-		'test': 'okay'
-	}
-		
-	return jsonify(response), 200
-
-
-
-@app.route('/test/<path>', methods=['GET', 'POST'])
-def test(path):
+@app.route('/test', defaults={"dir": ""}, methods=['GET', 'POST'] )
+@app.route('/test/<dir>', methods=['GET', 'POST'])
+def test(dir):
 	response = { 
 		'test': 'okay',
-		'path': '/test/' + path,
+		'path': '/test/' + dir,
 		'method': request.method,
 		'GET_var': request.args.get("var", default = "", type = str),
 		'POST_var': request.form.get("var", default = "", type = str)
@@ -166,7 +270,17 @@ def test(path):
 	return jsonify(response), 200
 
 
+#############################################################################################################################################################
+""" AUX FUNCTIONS """
+#############################################################################################################################################################
 
+def is_int(value):
+    try:
+        num = int(value)
+        return True
+    except ValueError:
+        return False;
+        
 
 #############################################################################################################################################################
 """ ERROR HANDLERS """
@@ -174,32 +288,42 @@ def test(path):
 
 @app.errorhandler(400)
 def error_handler_400(error):
-	response = { 'error': '400', 'msg': 'Bad Request' }
+	response = { "error": { "code": 400, "message": "Bad Request" } }
 	return jsonify(response), 400
 
 @app.errorhandler(401)
 def error_handler_401(error):
-	response = { 'error': '401', 'msg': 'Unauthorized' }
+	response = { "error": { "code": 401, "message": "Unauthorized" } }
 	return jsonify(response), 401
 
 @app.errorhandler(403)
 def error_handler_403(error):
-	response = { 'error': '403', 'msg': 'Forbidden' }
+	response = { "error": { "code": 403, "message": "Forbidden" } }
 	return jsonify(response), 403
 
 @app.errorhandler(404)
 def error_handler_404(error):
-	response = { 'error': '404', 'msg': 'Not Found' }
-	return jsonify(response), 404
+    response = { "error": { "code": 404, "message": "Not Found" } }
+    return jsonify(response), 404
 	
 @app.errorhandler(405)
 def error_handler_405(error):
-	response = { 'error': '405', 'msg': 'Method Not Allowed' }
+	response = { "error": { "code": 405, "message": "Method Not Allowed" } }
 	return jsonify(response), 405
+	
+@app.errorhandler(406)
+def error_handler_406(error):
+	response = { "error": { "code": 406, "message": "Not Acceptable" } }
+	return jsonify(response), 406
+
+@app.errorhandler(422)
+def error_handler_422(error):
+	response = { "error": { "code": 422, "message": "Unprocessable Entity" } }
+	return jsonify(response), 422
 
 @app.errorhandler(429)
 def error_handler_429(error):
-	response = { 'error': '429', 'msg': 'Too Many Requests' }
+	response = { "error": { "code": 429, "message": "Too Many Requests" } }
 	return jsonify(response), 429
 
 	

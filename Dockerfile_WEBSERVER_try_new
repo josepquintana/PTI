@@ -1,0 +1,35 @@
+# syntax = docker/dockerfile:1.0-experimental
+
+# First build stage, it will not persist in the final image
+FROM python:3.9 as intermediate
+
+# Me
+MAINTAINER Josep Quintana
+
+RUN echo "Log file: /docker-build.log"
+
+# Install git
+RUN DEBIAN_FRONTEND=noninteractive apt-get update > /docker-build.log 2>&1
+RUN DEBIAN_FRONTEND=noninteractive apt-get install -qq git > /docker-build.log 2>&1
+
+RUN mkdir /root/.ssh/
+RUN --mount=type=secret,id=id_rsa_pti_server cat /run/secrets/id_rsa_pti_server > /root/.ssh/id_rsa
+RUN chmod 600 /root/.ssh/id_rsa
+
+# Make sure the Github domain is accepted
+RUN touch /root/.ssh/known_hosts
+RUN ssh-keyscan github.com >> /root/.ssh/known_hosts
+
+# Clone the Github repository
+RUN git clone git@github.com:josepquintana/PTI.git
+RUN echo "Github repository cloned"
+
+# Set working directory
+WORKDIR /PTI
+
+RUN DEBIAN_FRONTEND=noninteractive pip3.9 install -q -r requirements.txt
+RUN echo "Ready to start webserver"
+
+# Start the server command
+EXPOSE 80
+CMD ["python3.9", "/PTI/server.py", "-p", "80"]

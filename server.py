@@ -22,6 +22,8 @@ TODO:
     
     add ID field to database
     
+    Database is NOT secured!!!!! Can be accessed from outside
+    
 """
 
 """
@@ -35,9 +37,12 @@ API endpoints:
 	/bids/ ->
 		/new
         /list ->
+            /<BUY_CURRENCY>/<SELL_CURRENCY>
             /buy/<CURRENCY>[/<MIN_AMOUNT>]
             /sell/<CURRENCY>[/<MIN_AMOUNT>]
             /owner/<USER>
+        /block/<BID_ID>
+        /delete/<BID_ID>
 		
 	/users ->
     
@@ -66,7 +71,7 @@ import bson
 import smtplib
 import requests
 import pymongo
-from bson import json_util
+from bson import json_util, objectid
 from datetime import datetime
 from flask import Flask, jsonify, request, abort, render_template
 from email.mime.multipart import MIMEMultipart
@@ -84,6 +89,12 @@ mongoClient = pymongo.MongoClient("mongodb://10.4.41.142:27017")
 pti_Database = mongoClient["DB_PTI"]
 bidsCollection = pti_Database["bids"]
 
+# Available Cryptocurrencies
+"""
+FBC: FiberCoin
+BNC: BarnaCoin
+"""
+availableCryptocurrencies = {"FBC", "BNC"}
 
 #############################################################################################################################################################
 """ MAIN WEBSITE """
@@ -119,9 +130,6 @@ def api_root():
 # API -> New bid
 @app.route('/api/v1/bids/new', methods=['POST'])
 def api_bids_new():
-    # Available Cryptocurrencies
-    availableCryptocurrencies = {"BTC", "ETH", "LTC", "DAI"}
-
     # Get username/wallet according to the provided API_KEY
     # <PROVISIONAL FOR DEV MODE>
     API_KEY = request.form.get("API_KEY", type = str) # Do not set Header application/json !
@@ -157,7 +165,7 @@ def api_bids_new():
     
     # Insert a new Document to the DB
     # TODO: Check if it already exists
-    newBid = { "owner": username, "buy_amount": buy_amount, "buy_currency": buy_currency, "sell_amount": sell_amount, "sell_currency": sell_currency}
+    newBid = { "owner": username, "buy_amount": buy_amount, "buy_currency": buy_currency, "sell_amount": sell_amount, "sell_currency": sell_currency }
     insertedBid = bidsCollection.insert_one(newBid)
 
     print(insertedBid.inserted_id)
@@ -165,7 +173,8 @@ def api_bids_new():
     response = { 
 		'bid': 'created',
 		'data': { 
-            'owner': username, 
+            "id": insertedBid.inserted_id, 
+            "owner": username, 
             "buy_amount": buy_amount,
             "buy_currency": buy_currency,
             "sell_amount": sell_amount, 
@@ -180,9 +189,73 @@ def api_bids_new():
 # API -> List all bids
 @app.route('/api/v1/bids/list', methods=['GET'])
 def api_bids_list():
-    db_query = bidsCollection.find({}, { "_id": 0 }).sort("owner")
-    response = bson.json_util.dumps({ "bids": list(db_query) }, indent = 2)
+    db_query = bidsCollection.find({}).sort("_id")
+    db_query_json = bson.json_util.dumps({ "bids": list(db_query) }, indent = 2)
+    response = set_ids_from_objectIds(db_query_json, "bids")
     return response, 200
+
+# API -> List bids buying <BUY_CURRENCY> and selling <SELL_CURRENCY>
+@app.route('/api/v1/bids/list/<buy_currency>/<sell_currency>', methods=['GET'])
+def api_bids_list_currencies(buy_currency, sell_currency):
+    if buy_currency in availableCryptocurrencies and sell_currency in availableCryptocurrencies:    
+        db_query = bidsCollection.find({ "buy_currency": buy_currency, "sell_currency": sell_currency }).sort("_id")
+        db_query_json = bson.json_util.dumps({ "bids": list(db_query) }, indent = 2)
+        response = set_ids_from_objectIds(db_query_json, "bids")
+        return response, 200
+    else:
+        abort(422)
+
+"""
+# API -> Delete bid
+@app.route('/api/v1/bids/delete/<bid_id>', methods=['POST'])
+def api_bids_delete():
+    # Get username/wallet according to the provided API_KEY
+    # <PROVISIONAL FOR DEV MODE>
+    API_KEY = request.form.get("API_KEY", type = str) # Do not set Header application/json !
+    validApiKeys = {
+        "0000": "jquintana",
+        "1111": "trader1",
+        "2222": "trader2",
+        "3333": "trader3"
+    }
+    
+    if API_KEY in validApiKeys:
+        username = validApiKeys.get(API_KEY)
+        print(f"Username: ", username)
+    else:
+        abort(401)
+    # </PROVISIONAL FOR DEV MODE>
+        
+    # Check if specified BID_ID is valid
+    if bidsCollection.find({ "_id": bid_id }).count() > 0:
+    if buy_amount is None or buy_currency is None or sell_amount is None or sell_currency is None:
+        abort(400)
+        
+    # Insert a new Document to the DB
+    # TODO: Check if it already exists
+    newBid = { "owner": username, "buy_amount": buy_amount, "buy_currency": buy_currency, "sell_amount": sell_amount, "sell_currency": sell_currency }
+    insertedBid = bidsCollection.insert_one(newBid)
+
+    print(insertedBid.inserted_id)
+       
+    response = { 
+		'bid': 'deleted',
+		'data': { 
+            "id": insertedBid.inserted_id, 
+            "owner": username, 
+            "buy_amount": buy_amount,
+            "buy_currency": buy_currency,
+            "sell_amount": sell_amount, 
+            "sell_currency": sell_currency
+        },
+        'server_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	}
+    
+    return jsonify(response), 200
+
+"""
+
+"""
 
 # API -> List bids buying <CURRENCY> [at least <MIN_AMOUNT]
 @app.route('/api/v1/bids/list/buy/<currency>', defaults={"min_amount": 0}, methods=['GET'] )
@@ -213,6 +286,7 @@ def api_bids_list_owner(user):
     response = bson.json_util.dumps({ "bids": list(db_query) }, indent = 2)
     return response, 200
 
+"""
 
 #############################################################################################################################################################
 """ API TEST ENDPOINTS """
@@ -296,6 +370,16 @@ def is_int(value):
         return True
     except ValueError:
         return False;
+        
+        
+def set_ids_from_objectIds(db_query_json, root_key):
+    response = json.loads(db_query_json)
+    for root_element in response[root_key]:
+        root_element["id"] = root_element["_id"]["$oid"]
+        del root_element["_id"]
+        
+    response = json.dumps(response, indent = 2)
+    return response
         
 
 #############################################################################################################################################################

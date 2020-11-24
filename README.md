@@ -58,6 +58,14 @@ docker logs <containerName>
 docker cp <containerId>:/file/path/within/container /host/path/target
 ```
 
+## Truffle Ganache Commands
+
+```
+truffle compile
+truffle migrate --reset
+truffle networks --clean
+```
+
 ## Authors
 
 - Josep Quintana

@@ -73,12 +73,13 @@ import requests
 import pymongo
 from bson import json_util, objectid
 from datetime import datetime
-from flask import Flask, jsonify, request, abort, render_template
+from flask import Flask, jsonify, request, abort, render_template, send_from_directory
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 # Flask configuration
-app = Flask(__name__, template_folder='www/templates', static_url_path='', static_folder='www/static')
+#app = Flask(__name__, template_folder='www/templates', static_url_path='', static_folder='www/static')
+app = Flask(__name__, template_folder='', static_url_path='', static_folder='')
 app.config["DEBUG"] = True
 app.config['JSON_SORT_KEYS'] = False
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
@@ -91,8 +92,8 @@ bidsCollection = pti_Database["bids"]
 
 # Available Cryptocurrencies
 """
-FBC: FiberCoin
-BNC: BarnaCoin
+FBC: FiberToken
+BNC: BarnaToken
 """
 availableCryptocurrencies = {"FBC", "BNC"}
 
@@ -111,6 +112,14 @@ def home():
         
     else:
         return render_template("index.html")
+
+#############################################################################################################################################################
+""" GANACHE TEST WEBAPP """
+#############################################################################################################################################################
+
+@app.route('/test/ganache', methods=['GET'])
+def ganache_test_webapp():
+    return render_template("ganache_test_app.html")
 
 
 #############################################################################################################################################################
@@ -359,6 +368,19 @@ def weather():
 
 	return jsonify(response), 200
 	
+
+#############################################################################################################################################################
+""" SERVE STATIC FILES """
+#############################################################################################################################################################
+
+@app.route('/files/abis/FiberToken.json', methods=['GET'])
+def files_FiberToken():
+    return send_from_directory("files/abis", "FiberToken.json")
+
+@app.route('/files/abis/BarnaToken.json', methods=['GET'])
+def files_BarnaToken():
+    return send_from_directory("files/abis", "BarnaToken.json")
+
 
 #############################################################################################################################################################
 """ AUX FUNCTIONS """

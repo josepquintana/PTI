@@ -1,0 +1,22 @@
+# Final build using Python image
+FROM python:3.9
+
+# Me
+MAINTAINER Josep Quintana
+
+# Set working directory
+WORKDIR /PTI
+
+# Get the necessary files
+COPY ./flutter/requirements.txt .
+COPY ./flutter/flutter_webapp.py .
+COPY ./flutter/flutter_web.tar.gz .
+
+# Dependencies
+RUN DEBIAN_FRONTEND=noninteractive pip3.9 install -q -r requirements.txt
+RUN DEBIAN_FRONTEND=noninteractive tar -xzf flutter_web.tar.gz
+RUN echo "Ready to start webserver"
+
+# Start the server command
+EXPOSE 8080
+CMD ["python3.9", "./flutter_webapp.py", "-p", "8080"]

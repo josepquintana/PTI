@@ -66,6 +66,19 @@ truffle migrate --reset
 truffle networks --clean
 ```
 
+## Flutter WebApp
+
+```
+flutter channel beta
+flutter upgrade
+flutter config --enable-web
+
+flutter devices
+
+flutter create .
+flutter build web
+```
+
 ## Authors
 
 - Josep Quintana

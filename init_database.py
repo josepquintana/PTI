@@ -17,12 +17,12 @@ bidsCollection.drop()
 bidsCollection.create_index([("owner", 1), ("buy_amount", 1), ("buy_currency", 1), ("sell_amount", 1), ("sell_currency", 1)], unique=True)
 
 newBids = [
-    { "owner": "jquintana", "buy_amount": 200, "buy_currency": "FBC", "sell_amount": 100, "sell_currency": "BNC"},
-    { "owner": "trader1",   "buy_amount": 100, "buy_currency": "BNC", "sell_amount": 200, "sell_currency": "FBC"},
-    { "owner": "jquintana", "buy_amount": 750, "buy_currency": "BNC", "sell_amount": 250, "sell_currency": "FBC"},
-    { "owner": "trader2",   "buy_amount": 250, "buy_currency": "FBC", "sell_amount": 750, "sell_currency": "BNC"},
-    { "owner": "jquintana", "buy_amount": 25,  "buy_currency": "BNC", "sell_amount": 250, "sell_currency": "FBC"},
-    { "owner": "trader3",   "buy_amount": 750, "buy_currency": "FBC", "sell_amount": 25,  "sell_currency": "BNC"}
+    { "owner": "jquintana", "buy_amount": 200, "buy_currency": "FBC", "sell_amount": 100, "sell_currency": "BNC", "blocked": 0 },
+    { "owner": "trader1",   "buy_amount": 100, "buy_currency": "BNC", "sell_amount": 200, "sell_currency": "FBC", "blocked": 0 },
+    { "owner": "jquintana", "buy_amount": 750, "buy_currency": "BNC", "sell_amount": 250, "sell_currency": "FBC", "blocked": 0 },
+    { "owner": "trader2",   "buy_amount": 250, "buy_currency": "FBC", "sell_amount": 750, "sell_currency": "BNC", "blocked": 0 },
+    { "owner": "jquintana", "buy_amount": 25,  "buy_currency": "BNC", "sell_amount": 250, "sell_currency": "FBC", "blocked": 0 },
+    { "owner": "trader3",   "buy_amount": 750, "buy_currency": "FBC", "sell_amount": 25,  "sell_currency": "BNC", "blocked": 0 }
 ]
 
 x = bidsCollection.insert_many(newBids)

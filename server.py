@@ -290,7 +290,7 @@ def api_bids_block(bid_id):
     return jsonify(response), 200
     
     
-# API -> Unlock bid status [NOT NECESSARY]
+# API -> Unlock bid status => Unblocks the BID and Deletes it from the DB since it has been traded
 @app.route('/api/v1/bids/unblock/<bid_id>', methods=['GET'])
 def api_bids_unblock(bid_id):
     # Check if specified BID_ID is valid
@@ -305,17 +305,16 @@ def api_bids_unblock(bid_id):
     if bidsCollection.find({ "_id": bson.objectid.ObjectId(bid_id), "blocked": 1 }).count() == 0:
         abort(409)
     
-    # Update 'blocked' field from DB
-    updatedBid = bidsCollection.update_one({ "_id": bson.objectid.ObjectId(bid_id) }, { "$set": { "blocked": 0 } })
-    
-    if updatedBid.modified_count != 1:
+    # Delete the Document from the DB
+    deletedBid = bidsCollection.delete_one({ "_id": bson.objectid.ObjectId(bid_id) })
+       
+    if deletedBid.deleted_count != 1:
         abort(503)
        
     response = { 
-        'bid': 'unblocked',
+        'bid': 'unblocked_&_deleted',
         'data': { 
-            "id": bid_id, 
-            "blocked": 0
+            "id": bid_id
         },
         'server_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }

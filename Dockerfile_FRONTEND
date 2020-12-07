@@ -1,0 +1,32 @@
+# Final build using Python image
+FROM python:3.9
+
+# Me
+MAINTAINER Josep Quintana
+
+# Set working directory
+WORKDIR /PTI
+
+# Get the necessary files
+COPY ./app/requirements.txt .
+COPY ./app/server_app.py .
+
+# Copy the compiled smart contracts
+RUN mkdir -p abis/
+COPY ./abis/BarnaToken.json abis/
+COPY ./abis/FiberToken.json abis/
+COPY ./abis/UpcToken.json abis/
+COPY ./abis/CatToken.json abis/
+
+# Copy the webapp
+RUN mkdir -p www/
+COPY ./app/www/index.html www/
+COPY ./app/www/favicon.ico www/
+
+# Dependencies
+RUN DEBIAN_FRONTEND=noninteractive pip3.9 install -q -r requirements.txt
+RUN echo "Ready to start webserver"
+
+# Start the server command
+EXPOSE 80
+CMD ["python3.9", "./server_app.py", "-p", "80"]

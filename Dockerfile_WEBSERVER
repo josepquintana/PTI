@@ -14,11 +14,10 @@ COPY ./webserver/server.py .
 
 # Copy the compiled smart contracts
 RUN mkdir -p files/abis/
-COPY ./abis/FiberToken.json files/abis/
-COPY ./abis/BarnaToken.json files/abis/
-
-# aux
-COPY ./webserver/ganache_test_app.html .
+COPY ./blockchain/abis/BarnaToken.json files/abis/
+COPY ./blockchain/abis/FiberToken.json files/abis/
+COPY ./blockchain/abis/UpcToken.json files/abis/
+COPY ./blockchain/abis/CatToken.json files/abis/
 
 # Dependencies
 RUN DEBIAN_FRONTEND=noninteractive pip3.9 install -q -r requirements.txt

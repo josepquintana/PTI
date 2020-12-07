@@ -78,8 +78,7 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
 # Flask configuration
-#app = Flask(__name__, template_folder='www/templates', static_url_path='', static_folder='www/static')
-app = Flask(__name__, template_folder='', static_url_path='', static_folder='')
+app = Flask(__name__, template_folder='www/templates', static_url_path='', static_folder='www/static')
 app.config["DEBUG"] = True
 app.config['JSON_SORT_KEYS'] = False
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
@@ -95,10 +94,12 @@ bidsCollection = pti_Database["bids"]
 
 # Available Cryptocurrencies
 """
-FBC: FiberToken
 BNC: BarnaToken
+FBC: FiberToken
+UPC: UpcToken
+CTC: CatToken
 """
-availableCryptocurrencies = {"FBC", "BNC"}
+availableCryptocurrencies = {"BNC", "FBC", "UPC", "CTC"}
 
 #############################################################################################################################################################
 """ MAIN WEBSITE """
@@ -108,21 +109,13 @@ availableCryptocurrencies = {"FBC", "BNC"}
 def home():
     if request.method == 'POST':
         response = { 
-            'msg': 'Welcome to the <NAME> website',
+            'msg': 'Welcome to the iToken website',
             'org': 'Projecte de Tecnologies de la Informació'
         }
         return jsonify(response), 200
         
     else:
         return render_template("index.html")
-
-#############################################################################################################################################################
-""" GANACHE TEST WEBAPP """
-#############################################################################################################################################################
-
-@app.route('/test/ganache', methods=['GET'])
-def ganache_test_webapp():
-    return render_template("ganache_test_app.html")
 
 #############################################################################################################################################################
 """ API ENDPOINTS """
@@ -384,7 +377,7 @@ def test_mongo():
 @app.route('/info', methods=['GET'])
 def info():
     response = {
-        "name": "<NAME>",
+        "name": "iToken",
         "subject": "PTI",
         "organization": "UPC",
         "author": "jquintana",
@@ -431,13 +424,21 @@ def weather():
 """ SERVE STATIC FILES """
 #############################################################################################################################################################
 
+@app.route('/files/abis/BarnaToken.json', methods=['GET'])
+def files_BarnaToken():
+    return send_from_directory("files/abis", "BarnaToken.json")
+
 @app.route('/files/abis/FiberToken.json', methods=['GET'])
 def files_FiberToken():
     return send_from_directory("files/abis", "FiberToken.json")
 
-@app.route('/files/abis/BarnaToken.json', methods=['GET'])
-def files_BarnaToken():
-    return send_from_directory("files/abis", "BarnaToken.json")
+@app.route('/files/abis/UpcToken.json', methods=['GET'])
+def files_UpcToken():
+    return send_from_directory("files/abis", "UpcToken.json")
+
+@app.route('/files/abis/CatToken.json', methods=['GET'])
+def files_CatToken():
+    return send_from_directory("files/abis", "CatToken.json")
 
 
 #############################################################################################################################################################

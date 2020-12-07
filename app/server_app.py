@@ -74,14 +74,22 @@ def run_delete_bid(bid_id):
 #############################################################################################################################################################
 """ SERVER STATIC ABI FILES """
 #############################################################################################################################################################
-        
+    
+@app.route('/files/abis/BarnaToken.json', methods=['GET'])
+def files_BarnaToken():
+    return send_from_directory("abis", "BarnaToken.json")
+    
 @app.route('/files/abis/FiberToken.json', methods=['GET'])
 def files_FiberToken():
     return send_from_directory("abis", "FiberToken.json")
 
-@app.route('/files/abis/BarnaToken.json', methods=['GET'])
-def files_BarnaToken():
-    return send_from_directory("abis", "BarnaToken.json")
+@app.route('/files/abis/UpcToken.json', methods=['GET'])
+def files_UpcToken():
+    return send_from_directory("abis", "UpcToken.json")
+    
+@app.route('/files/abis/CatToken.json', methods=['GET'])
+def files_CatToken():
+    return send_from_directory("abis", "CatToken.json")
     
 #############################################################################################################################################################
 """ TEST ROUTE """

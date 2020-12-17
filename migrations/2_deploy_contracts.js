@@ -2,6 +2,7 @@ const BarnaToken = artifacts.require('BarnaToken');
 const FiberToken = artifacts.require('FiberToken');
 const UpcToken = artifacts.require('UpcToken');
 const CatToken = artifacts.require('CatToken');
+const Escrow = artifacts.require('Escrow');
 
 /* Put the SmartContracts in the network */
 module.exports = async function(deployer, network, accounts) 
@@ -22,6 +23,10 @@ module.exports = async function(deployer, network, accounts)
 	await deployer.deploy(CatToken);
 	const catToken = await CatToken.deployed();
 	
+	// Deploy Escrow Contract
+	await deployer.deploy(Escrow);
+	const escrow = await Escrow.deployed();
+
 	// REMARK: initially all Tokens are assigned to the account that deployed the contracts		
 	// Transfer 1.5m BarnaToken (with "integer decimals") to the first trader 
 	await barnaToken.transfer(accounts[1], '1500000000000000000000000');

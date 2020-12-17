@@ -750,8 +750,9 @@
 	</script>
 	<!-- Aux Scripts -->
 	<script>
+		// Toastr.JS options
+		const toastr_title = 'iToken says';	
 		$(document).ready(function() {
-			// Toastr.JS options
 			toastr.options.timeOut = 6000;
 			toastr.options.extendedTimeOut = 1750;
 			toastr.options.positionClass = 'toast-bottom-right';
@@ -761,6 +762,7 @@
 			toastr.options.progressBar = true;
 		});
 
+		// Number animation
 		function animateBalance(obj, start, end, duration) {
 			let startTimestamp = null;
 			const step = (timestamp) => {
@@ -773,6 +775,19 @@
 				}
 			};
 			window.requestAnimationFrame(step);
+		}
+		
+		// URL GET ['login']
+		if(typeof getSearchParams('login') !== 'undefined') {
+			toastr.success('You have logged in successfully', toastr_title, {timeOut: 12500, extendedTimeOut: 5000} );
+			history.replaceState && history.replaceState(null, '', location.pathname + location.search.replace(/[\?&]login=[^&]+/, '').replace(/^&/, '?'));
+		}
+		
+		// GET URL Paramters
+		function getSearchParams(k){
+			var p={};
+			location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(s,k,v){p[k]=v})
+			return k?p[k]:p;
 		}
 	</script>
 </body>

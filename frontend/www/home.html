@@ -89,6 +89,16 @@
 			padding: 10px 0;
 			font-family: 'Merriweather', serif;
 		}
+		#accountLogoutIcon {
+			cursor: pointer;
+			color: #666666;
+		}
+		#accountLogout {
+			font-family: 'Montserrat', sans-serif !important;
+			font-size: 0.9em;
+			cursor: pointer;
+			color: #666666;
+		}
 		.balance-wrapper {
 			font-size: 22.5px;
 			padding: 10px 0;
@@ -180,6 +190,7 @@
 			<div class="row">
 				<div class="col account-wrapper">
 					<i class="fas fa-user-alt pr-3"></i><span id="account">0x0</span>
+					<i id="accountLogoutIcon" class="fas fa-sign-out-alt pl-5 pr-3"></i><span id="accountLogout">Log out</span>
 				</div>
 			</div>
 			<hr>
@@ -747,6 +758,36 @@
 			animateBalance($("#balanceCatToken"), currentCTC, updatedCTC, 1500);
 		}
 		
+	</script>
+	<!-- Log Out -->
+	<script>
+		$("#accountLogout").click(function(event) {
+			event.preventDefault();				
+			logOut($(this));
+			return false;
+		});
+
+		function logOut() {	
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					window.location.href = "/login?logout=1";
+					return true;
+				}
+				if (this.readyState == 4 && this.status != 200) {
+					let res = JSON.parse(this.responseText);
+					toastr.error(res.error.code + ': ' + res.error.message, toastr_title); 
+					return false;
+				}
+			};
+			
+			var formData = new FormData();
+			formData.append("logout-form-submitted", "submit");
+			formData.append("requested_with", "xmlhttprequest");
+							
+			xmlhttp.open("POST", "/run/logout", true);
+			xmlhttp.send(formData);	
+		}
 	</script>
 	<!-- Aux Scripts -->
 	<script>

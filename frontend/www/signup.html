@@ -264,6 +264,24 @@
 		.toast-message {
 		  font-weight: 300;
 		}
+		.loader {
+		  display: inline-block;
+		  width: 20px;
+		  height: 20px;
+		  border: 3px solid rgba(255,255,255,.3);
+		  border-radius: 50%;
+		  border-top-color: #fff;
+		  animation: spin 1s ease-in-out infinite;
+		  -webkit-animation: spin 1s ease-in-out infinite;
+		}
+
+		@keyframes spin {
+		  to { -webkit-transform: rotate(360deg); }
+		}
+		@-webkit-keyframes spin {
+		  to { -webkit-transform: rotate(360deg); }
+		}
+
 	</style>
 </head> 
 <body>
@@ -284,22 +302,25 @@
 	</div>
 	<!-- Sign Up -->
 	<script>
-		$("#form").submit(function(event) {
-			event.preventDefault();				
-			signUp($(this));
+		$("#form").submit(async function(event) {
+			console.log("Submitting request...");
+			event.preventDefault();		
+			$('.signup form button').html('<div class="loader"></div>');
+			await signUp($(this));
 			return false;
 		});
 
-		function signUp(signUpForm) {
+		async function signUp(signUpForm) {
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange = function() {
 				if (this.readyState == 4 && this.status == 201) {
-					window.location.href = "/signup?success=1&name="+$("input[name='name']", signUpForm).val();
+					window.location.href = "/signup?success=1&name="+$("input[name='name']", signUpForm).val()+"&email="+$("input[name='email']", signUpForm).val();
 					return true;
 				}
 				if (this.readyState == 4 && this.status != 201) {
 					let res = JSON.parse(this.responseText);
 					toastr.error(res.error.code + ': ' + res.error.message, toastr_title); 
+					$('.signup form button').html('Sign Up');
 					return false;
 				}
 			};
@@ -337,17 +358,19 @@
 			return k?p[k]:p;
 		}
 		
-		// URL GET ['success'] & ['name']
+		// URL GET ['success'] & ['name'] & ['email']
 		if(typeof getSearchParams('success') !== 'undefined') {
 			toastr.success('You have registered successfully', toastr_title, {timeOut: 12500, extendedTimeOut: 5000} );
-			let name = getSearchParams('name');
+			let name = decodeURIComponent(getSearchParams('name'));
+			let email = decodeURIComponent(getSearchParams('email'));
 			history.replaceState && history.replaceState(null, '', location.pathname + location.search.replace(/[\?&]success=[^&]+/, '').replace(/^&/, '?'));
 			history.replaceState && history.replaceState(null, '', location.pathname + location.search.replace(/[\?&]name=[^&]+/, '').replace(/^&/, '?'));
-			showSuccessScreen(name);
+			history.replaceState && history.replaceState(null, '', location.pathname + location.search.replace(/[\?&]email=[^&]+/, '').replace(/^&/, '?'));
+			showSuccessScreen(name, email);
 		}
 		
 		// Show Success Screen
-		function showSuccessScreen(name) {
+		function showSuccessScreen(name, email) {
 			$('.signup').empty();
 			var successScreen = '\
 				<div class="signup centered"> \
@@ -358,7 +381,7 @@
 						<p>You may now log in to your account.</p> \
 						<p>An email has been sent to your email address with your assigned account and private key.</p> \
 						<p>If you do not receive this email, please check your spam or junk folder.</p> \
-						<button class="btn btn-dark-green btn-block" onclick="window.location.href = \'/login\';" type="button">Access your account</button> \
+						<button class="btn btn-dark-green btn-block" onclick="window.location.href = \'/login?name='+name+'&email='+email+'\';" type="button">Access your account</button> \
 					</div> \
 				</div>';
 			

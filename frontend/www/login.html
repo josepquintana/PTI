@@ -196,7 +196,6 @@
 	</div>
 	<!-- Log In -->
 	<script>
-		var lala;
 		$("#form").submit(function(event) {
 			event.preventDefault();				
 			logIn($(this));
@@ -252,6 +251,16 @@
 		if(typeof getSearchParams('logout') !== 'undefined') {
 			toastr.success('You have logged out of your account successfully', toastr_title, {timeOut: 12500, extendedTimeOut: 5000} );
 			history.replaceState && history.replaceState(null, '', location.pathname + location.search.replace(/[\?&]logout=[^&]+/, '').replace(/^&/, '?'));
+		}
+		
+		// URL GET ['email'] & ['name']
+		if(typeof getSearchParams('email') !== 'undefined') {
+			let name = decodeURIComponent(getSearchParams('name'));
+			history.replaceState && history.replaceState(null, '', location.pathname + location.search.replace(/[\?&]name=[^&]+/, '').replace(/^&/, '?'));
+			toastr.success('Welcome ' + name, toastr_title, {timeOut: 12500, extendedTimeOut: 5000} );
+			let email = decodeURIComponent(getSearchParams('email'));
+			history.replaceState && history.replaceState(null, '', location.pathname + location.search.replace(/[\?&]email=[^&]+/, '').replace(/^&/, '?'));
+			$(".login form input[name='email']").val(email)
 		}
 		
 		// View Password Toggle

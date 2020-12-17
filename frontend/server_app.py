@@ -1,11 +1,15 @@
 #############################################################################################################################################################
 #############################################################################################################################################################
 
+import ssl
 import json
 import hashlib
 import requests
 from flask import Flask, jsonify, request, redirect, make_response, abort, url_for, render_template, send_from_directory
 from flask_cors import CORS
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import smtplib
  
 # Flask configuration
 app = Flask(__name__, template_folder='www/', static_url_path='', static_folder='www/')
@@ -111,7 +115,18 @@ def run_signup():
         
     pload = { "name": name, "email": email, "password": password, "repeat_password": repeat_password }
     res = requests.post('http://10.4.41.142/api/v1/users/signup', data = pload)
-    return res.text, res.status_code
+    
+    # Check if signup has been successful
+    if res.status_code == 201:
+        # Send email to user with account info
+        res_json = json.loads(res.text)['data']
+        if send_welcome_mail(name, res_json['email'], res_json['account'], res_json['private_key'], res_json['api_key']) is True:
+            return jsonify({ 'user': 'registered' }), 201
+        else:
+            abort(503)
+        
+    else:
+        return res.text, res.status_code
     
 
 @app.route('/run/login', methods=['POST'])
@@ -145,13 +160,12 @@ def run_logout():
     if request.form.get("logout-form-submitted", type = str) is None:
         abort(400)
     
-    # Destroy Log In cookie
-    response = make_response()
+    # Destroy Log In cookie and redirect to login page
+    response = make_response(redirect('/login?logout=1'))
     response.delete_cookie("itoken_user_email")
     response.delete_cookie("itoken_user_key")
         
-    # Redirect to login page
-    return redirect(url_for('login'))
+    return response
    
     
 #############################################################################################################################################################
@@ -172,6 +186,64 @@ def is_cookie_valid():
         return True
     else:
         return False
+    
+#############################################################################################################################################################
+""" SEND EMAIL """
+#############################################################################################################################################################
+    
+def send_welcome_mail(receiver_name, receiver_email, receiver_account, receiver_private_key, receiver_api_key):
+
+    # Credentials [TODO: Secure]
+    email_address = "itoken@josepquintana.me"
+    email_password = "Mt6a6JeLZRESyQ3" 
+    
+    context = ssl.create_default_context()
+    serverSMTP = smtplib.SMTP_SSL("josepquintana.me", "465", context=context)
+    serverSMTP.login(email_address, email_password)
+	
+    message = """\
+        <html>
+        <div id="pti-server-card" style="max-width:600px;background:#fdeddb;padding:20px;border-radius:10px">
+            <div>
+                <img src="https://i.imgur.com/Qg4Pzdi.jpg" width="600" height="auto" style="display:block;margin-bottom:37.5px" alt="header" tabindex="0">
+            </div>
+            <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#333333;line-height:25px;margin:0 0 20px 0;max-width:600px">Hi there <b>{0}</b>,<br><br>Your account has been created successfully. Welcome to the <span style="color:#d47939;font-weight:bold">iToken</span> community<br><br>Below you will find your account information:</p>
+            <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#333333;line-height:25px;margin:0 0 20px 15px;max-width:600px"><u>Account email address:</u><br><code style="color:#757575;">{1}</code></p>
+            <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#333333;line-height:25px;margin:0 0 20px 15px;max-width:600px"><u>Account address:</u><br><code style="color:#757575;">{2}</code></p>
+            <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#333333;line-height:25px;margin:0 0 20px 15px;max-width:600px"><u>Account private key:</u><br><code style="color:#757575;">{3}</code></p>
+            <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#333333;line-height:25px;margin:0 0 37.5px 15px;max-width:600px"><u>Account api key:</u><br><code style="color:#757575;">{4}</code></p>
+            <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#333333;line-height:25px;margin:0 0 37.5px 0;max-width:600px">Remember to keep your information private!</p>
+            <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#333333;line-height:25px;margin:0 0 37.5px 0;max-width:600px">You can login with your credentials by clicking the following link:</p>
+            <div style="display:block;max-width:600px;background:#a72020;padding:15px 40px 15px 40px;margin:0 0 37.5px 0;border-radius:50px;color:white;border:solid 1px black;font-size:15px;font-weight:bold;text-align:center;text-decoration:none"><a rel="noopener noreferrer" href="http://10.4.41.181/login?name={5}&email={6}" style="font-family:Helvetica,Arial,sans-serif;padding:7.5px 7.5px 7.5px 7.5px;color:white;letter-spacing:3px;vertical-align:baseline;text-decoration:none" target="_blank">ACCESS YOUR ACCOUNT</a></div>
+            <table style="margin:0 0 37.5px 0">
+                <tbody>
+                    <tr>
+                        <td style="width:90%">
+                            <p style="max-width:600px;font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#333333;margin:0;line-height:25px">Thank you and king <span style="color:#d47939;font-weight:bold">regards</span>,<br><br><span style="font-style:italic">iToken Team</span></p>
+                        </td>
+                        <td style="width:10%"><a rel="noopener noreferrer" href="https://josepquintana.me" target="_blank"><img src="https://josepquintana.me/icons/favicon.png" width="auto" height="64" style="display:block" alt="jq-logo"></a></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        </html>
+		"""
+		
+    message = message.format(receiver_name, receiver_email, receiver_account, receiver_private_key, receiver_api_key, receiver_name, receiver_email)
+		
+    mail = MIMEMultipart()
+    mail['From'] = "iToken <" + email_address + ">"
+    mail['To'] = receiver_email
+    mail['Subject'] = "Welcome to iToken"
+    mail.attach(MIMEText(message, "html"))
+	
+    try:
+        serverSMTP.sendmail(mail['From'], mail['To'], mail.as_string())
+        return True
+		
+    except smtplib.SMTPException as e:
+        return str(e)
+	   
     
 #############################################################################################################################################################
 """ SERVER STATIC ABI FILES """
@@ -228,6 +300,12 @@ def error_handler_403(error):
 def error_handler_404(error):
     response = { "error": { "code": 404, "message": "Not Found" } }
     return jsonify(response), 404
+    
+@app.errorhandler(503)
+def error_handler_503(error):
+	response = { "error": { "code": 503, "message": "Service Unavailable" } }
+	return jsonify(response), 503
+
 	
 #############################################################################################################################################################
 """ MAIN ENTRY POINT """

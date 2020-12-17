@@ -23,7 +23,7 @@ API endpoints:
 
     /	
 
-	/bids/
+	/bids
 		/new
         /list
             /
@@ -39,6 +39,12 @@ API endpoints:
         /delete/<BID_ID>
         
 	/users
+        /list
+        /list/email/<USER_EMAIL>
+        /signup
+        /login
+            /
+            /cookie
     
 ============================================================================================================================================================    
     
@@ -64,12 +70,14 @@ INFORMATION:
 #############################################################################################################################################################
 #############################################################################################################################################################
 
+import re
 import ssl
 import json
 import bson
 import smtplib
 import requests
 import pymongo
+import hashlib
 from bson import json_util, objectid
 from datetime import datetime
 from flask import Flask, jsonify, request, abort, render_template, send_from_directory
@@ -91,6 +99,8 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 mongoClient = pymongo.MongoClient("mongodb://10.4.41.142:27017")
 pti_Database = mongoClient["DB_PTI"]
 bidsCollection = pti_Database["bids"]
+usersCollection = pti_Database["users"]
+accountsCollection = pti_Database["accounts"]
 
 # Available Cryptocurrencies
 """
@@ -347,7 +357,168 @@ def api_bids_delete(bid_id):
     
     return jsonify(response), 200
     
+    
+# API -> List all users
+@app.route('/api/v1/users/list', methods=['GET'])
+def api_users_list():
+    db_query = usersCollection.find({}).sort("_id")
+    db_query_json = bson.json_util.dumps({ "users": list(db_query) }, indent = 2)
+    response = set_ids_from_objectIds(db_query_json, "users")
+    return response, 200
 
+
+# API -> List user with email <USER_EMAIL>
+@app.route('/api/v1/users/list/email/<user_email>', methods=['GET'])
+def api_users_list_email(user_email):
+    db_query = usersCollection.find({ "email": user_email })
+    if db_query.count() == 1:
+        db_query_json = bson.json_util.dumps({ "users": list(db_query) }, indent = 2)
+        response = set_ids_from_objectIds(db_query_json, "users")
+        return response, 200
+    else:
+        abort(404)
+ 
+
+# API -> Register a new user
+@app.route('/api/v1/users/signup', methods=['POST'])
+def api_users_signup():    
+    # Fetch all the POST parameters
+    email              = request.form.get("email", type = str)
+    password           = request.form.get("password", type = str)
+    repeat_password    = request.form.get("repeat_password", type = str)
+    
+    # Check if specified parameters are valid
+    if email is None or password is None or repeat_password is None:
+        abort(400)
+    
+    # Check if both passwords match
+    if password != repeat_password:
+        abort(422)
+    
+    # Check email format
+    if(not re.match(r"[^@]+@[^@]+\.[^@]+", email)):
+        abort(422)
+    
+    """    
+    # TO DO: Check if password is strong
+    """    
+    
+    # Check if the Document already exists in the DB
+    checkUser = { "email": email }
+    if usersCollection.find(checkUser, { "_id": 1 }).count() > 0:
+        abort(409)
+    
+    # Make hash of password
+    hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+    
+    # Assign an unused Account & Private Key to the new user
+    for dbAccount_i in accountsCollection.find({}):
+        if usersCollection.find({ "account": dbAccount_i['account'] }).count() == 0:
+            account = dbAccount_i['account']
+            private_key = dbAccount_i['private_key']
+            break
+
+    # Abort if could not find an unused Account
+    if account is None: 
+        abort(507)
+    
+    # Create API_KEY for the new user
+    basic_api_key_raw = email + account + private_key + password
+    API_KEY = hashlib.md5(basic_api_key_raw.encode('utf-8')).hexdigest()
+    
+    # Insert a new Document to the DB
+    newUser = { "email": email, "password": hashed_password, "account": account, "api_key": API_KEY }
+    insertedUser = usersCollection.insert_one(newUser)
+       
+    response = { 
+		'user': 'registered',
+		'data': { 
+            "id": str(insertedUser.inserted_id), 
+            "email": email,
+            "account": account,
+            "private_key": private_key,
+            "api_key": API_KEY
+        },
+        'server_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	}
+    
+    return jsonify(response), 201
+
+
+# API -> Check if specified log in data is valid
+@app.route('/api/v1/users/login', methods=['POST'])
+def api_users_login():    
+    # Fetch all the POST parameters
+    email              = request.form.get("email", type = str)
+    password           = request.form.get("password", type = str)
+    
+    # Check if specified parameters are set
+    if email is None or password is None:
+        abort(400)
+    
+    # Check email format
+    if(not re.match(r"[^@]+@[^@]+\.[^@]+", email)):
+        abort(422)
+        
+    # Check if user log in email is registered
+    db_query_email = usersCollection.find({ "email": email })
+    if db_query_email.count() == 0:
+        abort(404)
+    
+    # Check if the specified password is correct
+    hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+    db_query_full = usersCollection.find({ "email": email, "password": hashed_password })
+    if db_query_full.count() == 0:
+        abort(403)
+
+    response = { 
+		'user': 'authenticated',
+		'data': { 
+            "email": db_query_full[0]['email'],
+            "account": db_query_full[0]['account']
+        },
+        'server_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	}
+    
+    return jsonify(response), 200
+
+ 
+# API -> Check if specified log in cookie is valid
+@app.route('/api/v1/users/login/cookie', methods=['POST'])
+def api_users_login_cookie():    
+    # Fetch all the POST parameters
+    itoken_user_email   = request.form.get("itoken_user_email", type = str)
+    itoken_user_key     = request.form.get("itoken_user_key", type = str)
+    
+    # Check if specified parameters are set
+    if itoken_user_email is None or itoken_user_key is None:
+        abort(400)
+    
+    # Check email format
+    if(not re.match(r"[^@]+@[^@]+\.[^@]+", itoken_user_email)):
+        abort(422)
+        
+    # Check if user log in email is valid
+    db_query = usersCollection.find({ "email": itoken_user_email })
+    if db_query.count() == 0:
+        abort(404)
+    
+    # Check if the specified key matches the hashed password
+    if db_query[0]['password'] != itoken_user_key:
+        abort(403)
+
+    response = { 
+		'user': 'valid cookie',
+		'data': { 
+            "email": db_query[0]['email'],
+            "account": db_query[0]['account']
+        },
+        'server_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	}
+    
+    return jsonify(response), 200
+
+  
 #############################################################################################################################################################
 """ API TEST ENDPOINTS """
 #############################################################################################################################################################

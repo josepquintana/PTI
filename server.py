@@ -144,9 +144,9 @@ def api_root():
 # API -> New bid
 @app.route('/api/v1/bids/new', methods=['POST'])
 def api_bids_new():
-    # Get username/wallet according to the provided API_KEY
+    # Get user/wallet according to the provided API_KEY
     API_KEY = request.form.get("API_KEY", type = str) # Do not set Header application/json !
-    username = authenticate_user_api_key(API_KEY)
+    user = authenticate_user_api_key(API_KEY)
     
     # Fetch the rest of POST parameters
     buy_amount      = request.form.get("buy_amount", type = int)
@@ -165,19 +165,19 @@ def api_bids_new():
         abort(422)
     
     # Check if the Document already exists in the DB
-    checkBid = { "owner": username, "buy_amount": buy_amount, "buy_currency": buy_currency, "sell_amount": sell_amount, "sell_currency": sell_currency }
+    checkBid = { "owner": user, "buy_amount": buy_amount, "buy_currency": buy_currency, "sell_amount": sell_amount, "sell_currency": sell_currency }
     if bidsCollection.find(checkBid, { "_id": 1 }).count() > 0:
         abort(409)
     
     # Insert a new Document to the DB
-    newBid = { "owner": username, "buy_amount": buy_amount, "buy_currency": buy_currency, "sell_amount": sell_amount, "sell_currency": sell_currency, "blocked": 0 }
+    newBid = { "owner": user, "buy_amount": buy_amount, "buy_currency": buy_currency, "sell_amount": sell_amount, "sell_currency": sell_currency, "blocked": 0 }
     insertedBid = bidsCollection.insert_one(newBid)
        
     response = { 
 		'bid': 'created',
 		'data': { 
             "id": str(insertedBid.inserted_id), 
-            "owner": username, 
+            "owner": user, 
             "buy_amount": buy_amount,
             "buy_currency": buy_currency,
             "sell_amount": sell_amount, 
@@ -328,9 +328,9 @@ def api_bids_unblock(bid_id):
 # API -> Delete bid
 @app.route('/api/v1/bids/delete/<bid_id>', methods=['POST'])
 def api_bids_delete(bid_id):
-    # Get username/wallet according to the provided API_KEY
+    # Get user/wallet according to the provided API_KEY
     API_KEY = request.form.get("API_KEY", type = str) # Do not set Header application/json !
-    username = authenticate_user_api_key(API_KEY)
+    user = authenticate_user_api_key(API_KEY)
     
     # Check if specified BID_ID is valid
     if not bson.objectid.ObjectId.is_valid(bid_id):
@@ -341,7 +341,7 @@ def api_bids_delete(bid_id):
         abort(404)
         
     # Delete the Document from the DB (only by owner and ownly if not blocked)
-    deletedBid = bidsCollection.delete_one({ "_id": bson.objectid.ObjectId(bid_id), "owner": username, "blocked": 0 })
+    deletedBid = bidsCollection.delete_one({ "_id": bson.objectid.ObjectId(bid_id), "owner": user, "blocked": 0 })
        
     if deletedBid.deleted_count != 1:
         abort(409)
@@ -350,7 +350,7 @@ def api_bids_delete(bid_id):
         'bid': 'deleted',
         'data': { 
             "id": bid_id, 
-            "owner": username
+            "owner": user
         },
         'server_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     }
@@ -412,6 +412,7 @@ def api_users_signup():
     hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
     
     # Assign an unused Account & Private Key to the new user
+    account = None
     for dbAccount_i in accountsCollection.find({}):
         if usersCollection.find({ "account": dbAccount_i['account'] }).count() == 0:
             account = dbAccount_i['account']
@@ -420,7 +421,7 @@ def api_users_signup():
 
     # Abort if could not find an unused Account
     if account is None: 
-        abort(507)
+        abort(503)
     
     # Create API_KEY for the new user
     basic_api_key_raw = email + account + private_key + password
@@ -633,23 +634,16 @@ def set_ids_from_objectIds(db_query_json, root_key):
     response = json.dumps(response, indent = 2)
     return response
         
-
+        
 def authenticate_user_api_key(API_KEY):
-    # <PROVISIONAL FOR DEV MODE>
-    validApiKeys = {
-        "0000": "jquintana",
-        "1111": "trader1",
-        "2222": "trader2",
-        "3333": "trader3"
-    }
-    
-    if API_KEY in validApiKeys:
-        username = validApiKeys.get(API_KEY)
-        print(f"Auth username: ", username)
-        return username
+    db_query = usersCollection.find({ "api_key": API_KEY }, { "email": 1, "api_key": 1 })
+    if db_query.count() > 0:
+        print(f"Auth user   : ", db_query[0]['email'])
+        print(f"Auth API_KEY: ", db_query[0]['api_key'])
+        return db_query[0]['email']
+        
     else:
         abort(401)
-    # </PROVISIONAL FOR DEV MODE>
 
 
 #############################################################################################################################################################
@@ -701,13 +695,11 @@ def error_handler_429(error):
 	response = { "error": { "code": 429, "message": "Too Many Requests" } }
 	return jsonify(response), 429
 
-	
 @app.errorhandler(503)
 def error_handler_503(error):
 	response = { "error": { "code": 503, "message": "Service Unavailable" } }
 	return jsonify(response), 503
-
-	
+ 
 #############################################################################################################################################################
 """ SEND EMAIL """
 #############################################################################################################################################################

@@ -8,8 +8,8 @@ MAINTAINER Josep Quintana
 WORKDIR /PTI
 
 # Get the necessary files
-COPY ./app/requirements.txt .
-COPY ./app/server_app.py .
+COPY ./frontend/requirements.txt .
+COPY ./frontend/server_app.py .
 
 # Copy the compiled smart contracts
 RUN mkdir -p abis/
@@ -20,8 +20,10 @@ COPY ./abis/CatToken.json abis/
 
 # Copy the webapp
 RUN mkdir -p www/
-COPY ./app/www/index.html www/
-COPY ./app/www/favicon.ico www/
+COPY ./frontend/www/home.html www/
+COPY ./frontend/www/login.html www/
+COPY ./frontend/www/signup.html www/
+COPY ./frontend/www/favicon.ico www/
 
 # Dependencies
 RUN DEBIAN_FRONTEND=noninteractive pip3.9 install -q -r requirements.txt

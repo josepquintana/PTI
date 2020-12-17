@@ -2,8 +2,9 @@
 #############################################################################################################################################################
 
 import json
+import hashlib
 import requests
-from flask import Flask, jsonify, request, abort, render_template, send_from_directory
+from flask import Flask, jsonify, request, redirect, make_response, abort, url_for, render_template, send_from_directory
 from flask_cors import CORS
  
 # Flask configuration
@@ -18,9 +19,33 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 #############################################################################################################################################################
 
 @app.route('/', methods=['GET'])
+def root():
+    if is_cookie_valid():
+        return redirect(url_for('home'))
+    else:
+        return redirect(url_for('login'))
+
+@app.route('/home', methods=['GET'])
 def home():
-    return render_template("index.html")
-    
+    if is_cookie_valid():
+        return render_template("home.html")
+    else:
+        return redirect(url_for('login'))
+   
+@app.route('/signup', methods=['GET'])
+def signup():
+    if is_cookie_valid():
+        return redirect(url_for('home'))
+    else:
+        return render_template("signup.html")
+   
+@app.route('/login', methods=['GET'])
+def login():
+    if is_cookie_valid():
+        return redirect(url_for('home'))
+    else:
+        return render_template("login.html")
+   
 #############################################################################################################################################################
 """ PROCESS CLIENT REQUESTS """
 #############################################################################################################################################################
@@ -39,7 +64,6 @@ def run_list_bid_by_id(bid_id):
   
 @app.route('/run/create_new_bid', methods=['POST'])
 def run_create_new_bid():
-    pload = {'username':'Olivia','password':'123'}
     buy_amount = request.form.get("buy_amount", type = str)
     buy_currency = request.form.get("buy_currency", type = str)
     sell_amount = request.form.get("sell_amount", type = str)
@@ -69,8 +93,86 @@ def run_delete_bid(bid_id):
     pload = { 'API_KEY': API_KEY }
     res = requests.post('http://10.4.41.142/api/v1/bids/delete/' + bid_id, data = pload)
     return res.text, res.status_code
-"""    
+"""  
+ 
   
+@app.route('/run/signup', methods=['POST'])
+def run_signup():  
+    if request.form.get("signup-form-submitted", type = str) is None:
+        abort(400)
+        
+    name = request.form.get("name", type = str)
+    email = request.form.get("email", type = str)
+    password = request.form.get("password", type = str)
+    repeat_password = request.form.get("repeat_password", type = str)
+      
+    if name is None or email is None or password is None or repeat_password is None:
+        abort(400)
+        
+    pload = { "name": name, "email": email, "password": password, "repeat_password": repeat_password }
+    res = requests.post('http://10.4.41.142/api/v1/users/signup', data = pload)
+    return res.text, res.status_code
+    
+
+@app.route('/run/login', methods=['POST'])
+def run_login():  
+    if request.form.get("login-form-submitted", type = str) is None:
+        abort(400)
+        
+    email = request.form.get("email", type = str)
+    password = request.form.get("password", type = str)
+    
+    if email is None or password is None:
+        abort(400)
+        
+    pload = { "email": email, "password": password }
+    res_post = requests.post('http://10.4.41.142/api/v1/users/login', data = pload)
+    
+    # Set Log In cookie
+    if res_post.status_code == 200 and json.loads(res_post.text)['user'] == "authenticated":
+        hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+        response = make_response(res_post.text)
+        response.set_cookie("itoken_user_email", email, max_age=60*60*24)
+        response.set_cookie("itoken_user_key", hashed_password, max_age=60*60*24)
+        return response, 200
+    
+    else:
+        return res_post.text, res_post.status_code
+   
+   
+@app.route('/run/logout', methods=['POST'])
+def run_logout():  
+    if request.form.get("logout-form-submitted", type = str) is None:
+        abort(400)
+    
+    # Destroy Log In cookie
+    response = make_response()
+    response.delete_cookie("itoken_user_email")
+    response.delete_cookie("itoken_user_key")
+        
+    # Redirect to login page
+    return redirect(url_for('login'))
+   
+    
+#############################################################################################################################################################
+""" CHECK LOG IN COOKIE VALIDITY """
+#############################################################################################################################################################
+    
+def is_cookie_valid():
+    itoken_user_email = request.cookies.get("itoken_user_email")
+    itoken_user_key = request.cookies.get("itoken_user_key")
+    
+    if itoken_user_email is None or itoken_user_key is None:
+        return False
+    
+    pload = { "itoken_user_email": itoken_user_email, "itoken_user_key": itoken_user_key }
+    res_post = requests.post('http://10.4.41.142/api/v1/users/login/cookie', data = pload)
+    
+    if res_post.status_code == 200 and json.loads(res_post.text)['user'] == "valid cookie":
+        return True
+    else:
+        return False
+    
 #############################################################################################################################################################
 """ SERVER STATIC ABI FILES """
 #############################################################################################################################################################

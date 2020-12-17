@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>iToken | Log In</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600&family=Open+Sans:wght@300;400&family=Merriweather:wght@300&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins&display=swap">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" integrity="sha512-oc9+XSs1H243/FRN9Rw62Fn8EtxjEYWHXRvjS43YtueEewbS6ObfXcJNyohjHqVKFPoXXUxwc+q1K7Dee6vv9g==" crossorigin="anonymous" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.5.4/umd/popper.min.js" integrity="sha512-7yA/d79yIhHPvcrSiB8S/7TyX0OxlccU8F/kuB8mHYjLlF1MInPbEohpoqfz0AILoq5hoD7lELZAYYHbyeEjag==" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.7/js/tether.min.js" integrity="sha256-4lietOiwRDBKx1goZZbRiwB06L+/bPYEGDIKZt82bgg=" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.min.js" integrity="sha512-8qmis31OQi6hIRgvkht0s6mCOittjMa9GMqtK9hes5iEQBQE/Ca6yGE5FsW36vyipGoWQswBj/QBm2JR086Rkw==" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/ionicons/2.0.1/css/ionicons.min.css">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.10.1/css/mdb.min.css">
+	<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.10.1/js/mdb.min.js"></script>
+	<link rel="shortcut icon" href="/favicon.ico">
+	<style>
+		*, ::after, ::before {
+			box-sizing: border-box;
+		}
+		body {
+			background-image: url('https://josepquintana.me/images/wallpapers/abstract-wallpaper-1.png');
+		}
+		::-webkit-scrollbar {
+		  width: 5px;
+		  height: 5px;
+		}
+		*::-webkit-scrollbar-track {
+		  background: #f1f1f1; 
+		}
+		/* Handle */
+		*::-webkit-scrollbar-thumb {
+		  background: #aaaaaa; 
+		  background-clip: padding-box;
+		  border-radius: 7px;
+		  -webkit-border-radius: 7px;
+		  box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+		  -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+		}
+		*::-webkit-scrollbar-thumb:hover {
+		  background: #555;
+		}
+		*::-webkit-scrollbar-button {
+		  width: 0;
+		  height: 0;
+		  display: none;
+		}
+		*::-webkit-scrollbar-corner {
+		  background-color: transparent;
+		}
+		.cursor-pointer {
+		  cursor: pointer;
+		}
+		.centered {
+		  position: fixed;
+		  top: 50%;
+		  left: 50%;
+		  transform: translate(-50%, -50%);
+		}
+
+		.login {
+		  width: 100%;
+		  height: 100%;
+		}
+		.login h2 {
+		  font-family: 'Montserrat', sans-serif;
+		  text-transform: uppercase;
+		  text-align: center;
+		  text-shadow: 0px 0px 20px #f8f9fa;
+		  font-size: 2.5em;
+		}
+		.login form {
+		  max-width:375px;
+		  width:90%;
+		  background-color:#1e2833;
+		  padding:40px;
+		  border-radius:4px;
+		  transform:translate(-50%, -50%);
+		  position:absolute;
+		  top:50%;
+		  left:50%;
+		  color:#fff;
+		  box-shadow:3px 3px 4px rgba(0,0,0,0.2);
+		}
+
+		.login .illustration {
+		  text-align:center;
+		  padding:15px 0 20px;
+		  font-size:100px;
+		  color:#ffa000;
+		}
+
+		.login form .form-control {
+		  background:none;
+		  border:none;
+		  border-bottom:1px solid #434a52;
+		  border-radius:0;
+		  box-shadow:none;
+		  outline:none;
+		  color:inherit;
+		}
+
+		.login form .form-password {
+		  display: flex;
+		  width: 100%;
+		}
+
+		.login form #view-password {
+		  cursor: pointer;
+		  padding: 10px;
+		  color: white;
+		  min-width: 50px;
+		  text-align: center;    
+		  border-bottom: 1px solid #434a52;
+		}
+
+		.login form .btn-amber {
+		  font-family: 'Montserrat', sans-serif;
+		  background:#ff7c43;
+		  border:none;
+		  border-radius:4px;
+		  padding:11px;
+		  box-shadow:none;
+		  margin-top:26px;
+		  text-shadow:none;
+		  outline:none;
+		}
+
+		.login form .btn-amber:hover, .login form .btn-amber:active {
+		  background:#ff7c43;
+		  outline:none;
+		}
+
+		.login form .forgot,
+		.login form .to-signup {
+		  font-family: 'Montserrat', sans-serif;
+		  display:block;
+		  text-align:center;
+		  font-size:12px;
+		  color:#6f7a85;
+		  opacity:0.9;
+		  text-decoration:none;
+		}
+
+		.login form .forgot:hover, 
+		.login form .forgot:active, 
+		.login form .to-signup:hover, 
+		.login form .to-signup:active {
+		  opacity:1;
+		  text-decoration:none;
+		}
+
+		.login form .btn-primary:active {
+		  transform:translateY(1px);
+		}
+
+
+		#toast-container {
+		  -moz-box-sizing: border-box;
+		  -webkit-box-sizing: border-box;
+		  box-sizing: border-box;
+		}
+		.toast {
+		  font-family: 'Poppins', sans-serif;
+		  font-size: 15px;
+		  line-height: 20px;
+		  letter-spacing: 0.02em;
+		}
+		.toast-title {
+		  font-weight: 700;
+		}
+		.toast-message {
+		  font-weight: 300;
+		}
+	</style>
+</head> 
+<body>
+	<div class="login centered">
+		<form id="form" action="login" method="post" novalidate>
+			<h2 class="title">Log In</h2>
+			<div class="illustration"><i class="icon ion-ios-locked-outline"></i></div>
+			<div class="form-group"><input id="email" class="form-control" type="email" name="email" placeholder="Email"></div>
+			<div class="form-group form-password">
+				<input id="password" class="form-control" type="password" name="password" placeholder="Password">
+				<i id="view-password" class="far fa-eye"></i>
+			</div>
+			<div class="form-group"><button class="btn btn-amber btn-block" id="submit" type="submit" name="submit" value="Log In">Log In</button></div>
+			<a href="#" class="forgot">Forgot your email or password?</a>
+			<a href="/signup" class="to-signup">Create an account here</a>
+		</form>
+	</div>
+	<!-- Log In -->
+	<script>
+		var lala;
+		$("#form").submit(function(event) {
+			event.preventDefault();				
+			logIn($(this));
+			return false;
+		});
+
+		function logIn(logInForm) {	
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					window.location.href = "/home?login=success";
+					return true;
+				}
+				if (this.readyState == 4 && this.status != 200) {
+					let res = JSON.parse(this.responseText);
+					toastr.error(res.error.code + ': ' + res.error.message, toastr_title); 
+					return false;
+				}
+			};
+			
+			var formData = new FormData();
+			formData.append("email", $("input[name='email']", logInForm).val());
+			formData.append("password", $("input[name='password']", logInForm).val());
+			formData.append("login-form-submitted", $("button[name='submit']", logInForm).val());
+			formData.append("requested_with", "xmlhttprequest");
+							
+			xmlhttp.open("POST", "/run/login", true);
+			xmlhttp.send(formData);	
+		}
+	</script>
+	<!-- Aux Scripts -->
+	<script>
+		// Toastr.JS options
+		const toastr_title = 'iToken says';	
+		$(document).ready(function() {
+			toastr.options.timeOut = 6000;
+			toastr.options.extendedTimeOut = 1750;
+			toastr.options.positionClass = 'toast-bottom-right';
+			toastr.options.closeButton = true;
+			toastr.options.onclick = function() { }	
+			toastr.options.preventDuplicates = true;
+			toastr.options.progressBar = true;
+		});
+		
+		// GET URL Paramters
+		function getSearchParams(k){
+			var p={};
+			location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(s,k,v){p[k]=v})
+			return k?p[k]:p;
+		}
+		
+		// URL GET ['logout']
+		if(typeof getSearchParams('logout') !== 'undefined') {
+			toastr.success('You have logged out of your account successfully', toastr_title, {timeOut: 12500, extendedTimeOut: 5000} );
+			history.replaceState && history.replaceState(null, '', location.pathname + location.search.replace(/[\?&]logout=[^&]+/, '').replace(/^&/, '?'));
+		}
+		
+		// View Password Toggle
+		$('#view-password').mousedown(function() {
+			$('#password').attr("type", "text");
+			$(this).removeClass('fa-eye fa-eye-slash');
+			$(this).addClass('fa-eye-slash');
+		});
+		$('#view-password').mouseup(function() {
+			$('#password').attr("type", "password");
+			$(this).removeClass('fa-eye fa-eye-slash');
+			$(this).addClass('fa-eye');
+		});
+		$('#view-password').mouseleave(function() {
+			$('#password').attr("type", "password"); 
+			$(this).removeClass('fa-eye fa-eye-slash');
+			$(this).addClass('fa-eye');
+				
+		});
+		if(navigator.userAgent.match(/Android|BlackBerry|iPhone|iPad|iPod|Opera Mini|IEMobile/i)) {
+			$('#view-password').on("touchstart", function() {
+				$('#password').attr("type", "text");  
+			});
+			$('#view-password').on("touchend", function() {
+				$('#password').attr("type", "password");  
+			});
+		}
+	</script>
+</body>
+</html>

@@ -3,6 +3,12 @@ import pymongo
 # Welcome
 print('\nWelcome!\n')
 
+# Confirmation
+ask = input("Drop all DB documents? [y/n]:\n > ") 
+if ask != "y":
+    print("\nQuitting...\n")
+    quit()
+    
 # Connect to MongoDB
 mongoClient = pymongo.MongoClient("mongodb://localhost:27017/")
 
@@ -17,8 +23,10 @@ bidsCollection.drop()
 bidsCollection.create_index([("owner", 1), ("buy_amount", 1), ("buy_currency", 1), ("sell_amount", 1), ("sell_currency", 1)], unique=True)
 
 newBids = [
-    { "owner": "jquintana", "buy_amount": 200, "buy_currency": "FBC", "sell_amount": 100, "sell_currency": "BNC", "blocked": 0 },
-    { "owner": "trader1",   "buy_amount": 100, "buy_currency": "BNC", "sell_amount": 200, "sell_currency": "FBC", "blocked": 0 }
+    { "owner": "josep.quintana.torres@estudiantat.upc.edu", "buy_amount": 100, "buy_currency": "FBC", "sell_amount": 400, "sell_currency": "CTC", "blocked": 0 },
+    { "owner": "josep.quintana.torres@estudiantat.upc.edu", "buy_amount": 200, "buy_currency": "BNC", "sell_amount": 300, "sell_currency": "FBC", "blocked": 0 },
+    { "owner": "josep.quintana.torres@estudiantat.upc.edu", "buy_amount": 300, "buy_currency": "UPC", "sell_amount": 200, "sell_currency": "BNC", "blocked": 0 },
+    { "owner": "josep.quintana.torres@estudiantat.upc.edu", "buy_amount": 400, "buy_currency": "CTC", "sell_amount": 100, "sell_currency": "UPC", "blocked": 0 }
 ]
 
 x = bidsCollection.insert_many(newBids)

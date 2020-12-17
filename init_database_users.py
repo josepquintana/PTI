@@ -4,6 +4,12 @@ import hashlib
 # Welcome
 print('\nWelcome!\n')
 
+# Confirmation
+ask = input("Drop all DB documents? [y/n]:\n > ") 
+if ask != "y":
+    print("\nQuitting...\n")
+    quit()
+    
 # Connect to MongoDB
 mongoClient = pymongo.MongoClient("mongodb://localhost:27017/")
 

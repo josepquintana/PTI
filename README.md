@@ -46,6 +46,13 @@ docker run --name pti_database -d -p 27017:27017 pti_database
 docker run -it --entrypoint bash <containerName>
 ```
 
+## Stop and Remove Container
+
+```
+docker stop <containerName>
+docker rm <containerName>
+```
+
 ## Check Docker logs
 
 ```
@@ -56,6 +63,27 @@ docker logs <containerName>
 
 ```
 docker cp <containerId>:/file/path/within/container /host/path/target
+```
+
+## Truffle Ganache Commands
+
+```
+truffle compile
+truffle migrate --reset
+truffle networks --clean
+```
+
+## Flutter WebApp
+
+```
+flutter channel beta
+flutter upgrade
+flutter config --enable-web
+
+flutter devices
+
+flutter create .
+flutter build web
 ```
 
 ## Authors
@@ -69,8 +97,11 @@ docker cp <containerId>:/file/path/within/container /host/path/target
 ## TO DO
 
 - [x] Dockerfile for Blockchain (truffle)
-- [] Simple API endpoint
-- [] Truffe Process start
+- [x] Simple API endpoint
+- [x] Truffe Process start
+- [] web3dart
+- [] Recompile contracts and get abi address
+- [] Think how will user_2 approve SELL
 - [] Use Docker Hub
 - [] IPFS
 - [] Private Blockchain

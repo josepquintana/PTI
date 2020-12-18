@@ -1,0 +1,20 @@
+# Final build using MongoDB image
+FROM mongo:4.4
+
+# Me
+MAINTAINER Josep Quintana
+
+# Set working directory
+WORKDIR /PTI
+
+# Dependencies
+RUN mkdir -p /data/db
+RUN echo "Ready to start database"
+
+# Show message
+RUN echo "Remember to run the 'init_database_{collection}.py' scripts"
+
+# Start the database command
+EXPOSE 27017
+CMD ["mongod"]
+	

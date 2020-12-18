@@ -1,0 +1,30 @@
+# Final build using Python image
+FROM python:3.9
+
+# Me
+MAINTAINER Josep Quintana
+
+# Set working directory
+WORKDIR /PTI
+
+# Get the necessary files
+COPY ./webserver/requirements.txt .
+COPY ./webserver/www.tar.gz .
+COPY ./webserver/server.py .
+
+# Copy the compiled smart contracts
+RUN mkdir -p files/abis/
+COPY ./blockchain/abis/BarnaToken.json files/abis/
+COPY ./blockchain/abis/FiberToken.json files/abis/
+COPY ./blockchain/abis/UpcToken.json files/abis/
+COPY ./blockchain/abis/CatToken.json files/abis/
+
+# Dependencies
+RUN DEBIAN_FRONTEND=noninteractive pip3.9 install -q -r requirements.txt
+RUN DEBIAN_FRONTEND=noninteractive tar -xzf www.tar.gz
+RUN echo "Ready to start webserver"
+
+# Start the server command
+EXPOSE 80
+CMD ["python3.9", "./server.py", "-p", "80"]
+

@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>PTI Ganache Test</title>
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@200;300;400;600&family=Open+Sans:wght@300;400&family=Merriweather:wght@300&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css" integrity="sha512-+4zCK9k+qNFUR5X+cKL9EIR+ZOhtIloNl9GIKS57V1MyNsYpYcUrUeQc9vNfzsWfV28IaLL3i96P9sdNyeRssA==" crossorigin="anonymous" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/css/bootstrap.min.css" integrity="sha512-oc9+XSs1H243/FRN9Rw62Fn8EtxjEYWHXRvjS43YtueEewbS6ObfXcJNyohjHqVKFPoXXUxwc+q1K7Dee6vv9g==" crossorigin="anonymous" />
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.5.4/umd/popper.min.js" integrity="sha512-7yA/d79yIhHPvcrSiB8S/7TyX0OxlccU8F/kuB8mHYjLlF1MInPbEohpoqfz0AILoq5hoD7lELZAYYHbyeEjag==" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.5.3/js/bootstrap.min.js" integrity="sha512-8qmis31OQi6hIRgvkht0s6mCOittjMa9GMqtK9hes5iEQBQE/Ca6yGE5FsW36vyipGoWQswBj/QBm2JR086Rkw==" crossorigin="anonymous"></script>
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css">
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>   
+	<script src="https://unpkg.com/web3@latest/dist/web3.min.js"></script>   
+	<script src="https://requirejs.org/docs/release/2.3.6/minified/require.js"></script>   
+	<style>
+		*, ::after, ::before {
+			box-sizing: border-box;
+		}
+		body {
+			background-image: url('https://josepquintana.me/images/wallpapers/abstract-wallpaper-1.png');
+		}
+		::-webkit-scrollbar {
+		  width: 5px;
+		  height: 5px;
+		}
+		*::-webkit-scrollbar-track {
+		  background: #f1f1f1; 
+		}
+		/* Handle */
+		*::-webkit-scrollbar-thumb {
+		  background: #aaaaaa; 
+		  background-clip: padding-box;
+		  border-radius: 7px;
+		  -webkit-border-radius: 7px;
+		  box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+		  -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
+		}
+		*::-webkit-scrollbar-thumb:hover {
+		  background: #555;
+		}
+		*::-webkit-scrollbar-button {
+		  width: 0;
+		  height: 0;
+		  display: none;
+		}
+		*::-webkit-scrollbar-corner {
+		  background-color: transparent;
+		}
+		.wrapper {
+			position: fixed;
+			top: 50%;
+			left: 50%;
+			transform: translate(-50%, -50%);
+			text-align: center;
+			padding-bottom: 50px;
+		}
+		h1 {
+			padding-bottom: 50px;
+			font-family: 'Montserrat', sans-serif !important;
+			font-weight: 600;
+			color: white;
+			font-size: 3.5rem;
+			margin: 1.3rem auto;
+			text-shadow: 2px 2px 5px black;
+		}
+		#startBlockchain {
+			padding: 50px;
+			font-size: 5rem;
+			color: white;
+			text-shadow: 0 0 20px #4f4d4d;
+			cursor: pointer;
+		}
+		.inner {
+			background: #f5f5f5;
+			color: black;
+			padding: 20px 40px;
+			border-radius: 50px;
+			box-shadow: 0 0px 5px 0px rgba(0,0,0,0.16), 0 0px 15px 5px rgba(0,0,0,0.12);
+			max-width: 75vw;
+			margin: auto;
+		}
+		.row {
+			margin: 20px 0;
+			text-align: center;
+		}
+		.account-wrapper {
+			font-size: 22.5px;
+			padding: 10px 0;
+			font-family: 'Merriweather', serif;
+		}
+		#accountLogoutIcon {
+			cursor: pointer;
+			color: #666666;
+		}
+		#accountLogout {
+			font-family: 'Montserrat', sans-serif !important;
+			font-size: 0.9em;
+			cursor: pointer;
+			color: #666666;
+		}
+		.balance-wrapper {
+			font-size: 22.5px;
+			padding: 10px 0;
+			font-family: 'Merriweather', serif;
+		}
+		#balanceBarnaToken {
+			color: #2196F3;
+		}
+		#balanceFiberToken {
+			color: #ff5722;
+		}
+		#balanceUpcToken {
+			color: #4caf50;
+		}
+		#balanceCatToken {
+			color: #9c27b0;
+		}
+		.operations-title {
+			padding-top: 20px;
+			margin: auto;
+			font-family: 'Montserrat', sans-serif;
+		}
+		.operation-wrapper {
+			font-size: 20px;
+			padding: 10px 0;
+			font-family: 'Montserrat', sans-serif
+		}
+		#operationViewOpenBids,
+		#operationCreateBid {
+			cursor: pointer;
+		}
+		#modalOpenBids,
+		#modalCreateBid {
+		
+		}
+		#modalOpenBids .modal-content,
+		#modalCreateBid .modal-content {
+			background-color: #2d2d2d;
+		}
+		#modalOpenBids .modal-content .modal-header,
+		#modalCreateBid .modal-content .modal-header {
+			color: white;
+		}
+		#modalOpenBids .modal-content .modal-body,
+		#modalCreateBid .modal-content .modal-body {
+			overflow-y: auto;
+			max-height: 85vh;
+			background-color: white;
+		}
+		#modalOpenBids .modal-open-bids-content-wrapper {
+			display: block;
+		}
+		#modalOpenBids .modal-open-bids-content-wrapper .table td, 
+		#modalOpenBids .modal-open-bids-content-wrapper .table th {
+			text-align: center;
+		}
+		#modalOpenBids .modal-open-bids-content-wrapper .first-row {
+			border-top: 0;
+		}
+		.bid-accept-button {
+			color: #28a745;
+			font-size: 1.5rem;
+			cursor: pointer;
+		}
+		#modalCreateBid .modal-create-bid-content-wrapper {
+			display: block;
+		}
+		#modalOpenBidsCloseButton,
+		#modalCreateBidCloseButton {
+			position: absolute;
+			top: 0;
+			right: 0;
+			margin: 0.5rem;
+			padding: 0.5rem;
+			font-size: 18px;
+			cursor: pointer;
+			color: white;
+			background-color: transparent;
+			border: 0;
+			-webkit-appearance: none;
+		}
+	</style>
+</head> 
+<body>
+	<div class="container wrapper">
+		<h1 id="mainTitle">Welcome!</h1>
+		<div class="start-blockchain-wrapper"><i id="startBlockchain" class="far fa-play-circle"></i></div>
+		<div class="inner" style="display: none">
+			<div class="row">
+				<div class="col account-wrapper">
+					<i class="fas fa-user-alt pr-3"></i><span id="account">0x0</span>
+					<i id="accountLogoutIcon" class="fas fa-sign-out-alt pl-5 pr-3"></i><span id="accountLogout">Log out</span>
+				</div>
+			</div>
+			<hr>
+			<div class="row">
+				<div class="col balance-wrapper">
+					<i class="fas fa-coins pr-3"></i><span id="balanceBarnaToken">-.--</span><span class="pl-2">BNC</span>
+				</div>
+				<div class="col balance-wrapper">
+					<i class="fas fa-coins pr-3"></i><span id="balanceFiberToken">-.--</span><span class="pl-2">FBC</span>
+				</div>
+				<div class="col balance-wrapper">
+					<i class="fas fa-coins pr-3"></i><span id="balanceUpcToken">-.--</span><span class="pl-2">UPC</span>
+				</div>
+				<div class="col balance-wrapper">
+					<i class="fas fa-coins pr-3"></i><span id="balanceCatToken">-.--</span><span class="pl-2">CTC</span>
+				</div>
+			</div>
+			<hr>
+			<div class="row"><h3 class="operations-title">Operations</h3></div>
+			<div class="row">
+				<div class="col operation-wrapper">
+					<span id="operationViewOpenBids"><i class="fas fa-eye pr-3 text-info"></i>View open public bids</span>
+				</div>
+				<div class="col operation-wrapper">
+					<span id="operationCreateBid"><i class="fas fa-plus-circle pr-3 text-info"></i>Create new public bid</span>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="modalOpenBids" tabindex="-1" role="dialog" aria-labelledby="modalOpenBidsTitle">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalOpenBidsTitle">OPEN PUBLIC BIDS</h5>
+					<i id="modalOpenBidsCloseButton" data-dismiss="modal" class="far fa-times-circle"></i>
+				</div>
+				<div class="modal-body">
+					<div class="modal-open-bids-content-wrapper">
+						<table class="table table-responsive-sm table-hover">
+							<thead>
+								<tr class="first-row">
+									<th>OWNER</th>
+									<th>BUY AMOUNT</th>
+									<th>BUY CURRENCY</th>
+									<th>SELL AMOUNT</th>
+									<th>SELL CURRENCY</th>
+									<th>ACCEPT</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr id="bid-000000000000000000000000" style="display: none">
+									<td><span class="bid-owner">_user</span></td>
+									<td><span class="bid-buy_amount">_amount1</span></td>
+									<td><span class="bid-buy_currency">_token1</span></td>
+									<td><span class="bid-sell_amount">_amount2</span></td>
+									<td><span class="bid-sell_currency">_token2</span></td>
+									<td><i data-bid_id="000000000000000000000000" class="fas fa-check-circle bid-accept-button"></i></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="modal fade" id="modalCreateBid" tabindex="-1" role="dialog" aria-labelledby="modalCreateBidTitle">
+		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="modalCreateBidTitle">CREATE NEW PUBLIC BIDS</h5>
+					<i id="modalCreateBidCloseButton" data-dismiss="modal" class="far fa-times-circle"></i>
+				</div>
+				<div class="modal-body">
+					<div class="modal-create-bid-content-wrapper">
+						<form id="createBidForm" action="" method="">
+							<div class="form-row">
+								<div class="form-group col">
+									<label for="createBidForm-buy_currency">Buy Currency</label>
+									<select id="createBidForm-buy_currency" class="form-control" required>
+										<option disabled selected value>Select Currency...</option>
+										<option value="BNC">BNC</option>
+										<option value="FBC">FBC</option>
+										<option value="UPC">UPC</option>
+										<option value="CTC">CTC</option>
+									</select>
+								</div>
+								<div class="form-group col">
+									<label for="createBidForm-buy_amount">Buy Amount</label>
+									<input type="text" class="form-control" id="createBidForm-buy_amount" placeholder="Enter buy amount" required>
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col">
+									<label for="createBidForm-sell_currency">Sell Currency</label>
+									<select id="createBidForm-sell_currency" class="form-control" required>
+										<option disabled selected value>Select Currency...</option>
+										<option value="BNC">BNC</option>
+										<option value="FBC">FBC</option>
+										<option value="UPC">UPC</option>
+										<option value="CTC">CTC</option>
+									</select>
+								</div>
+								<div class="form-group col">
+									<label for="createBidForm-sell_amount">Sell Amount</label>
+									<input type="text" class="form-control" id="createBidForm-sell_amount" placeholder="Enter sell amount" required>
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col">
+									<label for="createBidForm-API_KEY">API KEY</label>
+									<input type="password" class="form-control" id="createBidForm-API_KEY" placeholder="Your API KEY" required>
+								</div>
+							</div>
+							<div class="form-row">
+								<div class="form-group col text-center">
+									<button id="createBidForm-submitButton" type="submit" class="btn btn-dark auto">Create bid</button>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- ABIS as JSON Strings -->
+	<script>
+	</script>
+	<!-- Load Blockchain Data -->
+	<script>
+		var ganacheAccounts = ['0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0', '0x22d491Bde2303f2f43325b2108D26f1eAbA1e32b'];
+		var myAccount;
+		var receiverAccount;
+		
+		var fiberToken;
+		var barnaToken;
+		
+		async function start() {
+			await loadWeb3();
+			await loadBlockchainData();
+		}
+
+		async function loadWeb3() {
+			if(window.ethereum) {
+				window.web3 = new Web3(window.ethereum);
+				await window.ethereum.enable();
+			}
+			else if(window.web3) {
+				window.web3 = new Web3(window.web3.currentProvider);
+			}
+			else {
+				window.alert('Non-Ethereum browser detected. Use MetaMask, please!');
+			}
+		}
+		
+		async function loadBlockchainData() {
+			const web3 = window.web3;
+			const accounts = await web3.eth.getAccounts();
+			myAccount = accounts[0];
+			$('#account').text(myAccount);
+			
+			if(myAccount == ganacheAccounts[0]) { receiverAccount = ganacheAccounts[1]; }
+			if(myAccount == ganacheAccounts[1]) { receiverAccount = ganacheAccounts[0]; }
+			
+			toastr.success(myAccount, "Account Connected: ");
+			console.log('MetaMask Selected Account: ' + myAccount);
+			console.log('Ganache Receiver Account:  ' + receiverAccount);
+			
+			const networkId = await web3.eth.net.getId();
+			// toastr.success(networkId, "Connected Network: ");
+			console.log('Network ID: ' + networkId);
+			
+			// Load BarnaToken
+			$.getJSON('/files/abis/BarnaToken.json', async function(BarnaToken) {
+				const barnaTokenData = BarnaToken.networks[networkId];
+				if (barnaTokenData) {
+					barnaToken = new web3.eth.Contract(BarnaToken.abi, barnaTokenData.address);
+					let barnaTokenBalance = await barnaToken.methods.balanceOf(myAccount).call();
+					$("#balanceBarnaToken").text(window.web3.utils.fromWei(barnaTokenBalance));
+					console.log('BarnaToken contract loaded successfully');
+				}
+				else {
+					toastr.error('BarnaToken contract not deployed to detected network');
+				}
+			});
+			
+			// Load FiberToken
+			$.getJSON('/files/abis/FiberToken.json', async function(FiberToken) {	
+				const fiberTokenData = FiberToken.networks[networkId];
+				if(fiberTokenData) {
+					fiberToken = new web3.eth.Contract(FiberToken.abi, fiberTokenData.address);
+					let fiberTokenBalance = await fiberToken.methods.balanceOf(myAccount).call();
+					$("#balanceFiberToken").text(window.web3.utils.fromWei(fiberTokenBalance));
+					console.log('FiberToken contract loaded successfully');
+				}
+				else {
+					toastr.error('FiberToken contract not deployed to detected network');
+				}
+			});
+			
+			// Load UpcToken
+			$.getJSON('/files/abis/UpcToken.json', async function(UpcToken) {	
+				const upcTokenData = UpcToken.networks[networkId];
+				if(upcTokenData) {
+					upcToken = new web3.eth.Contract(UpcToken.abi, upcTokenData.address);
+					let upcTokenBalance = await upcToken.methods.balanceOf(myAccount).call();
+					$("#balanceUpcToken").text(window.web3.utils.fromWei(upcTokenBalance));
+					console.log('UpcToken contract loaded successfully');
+				}
+				else {
+					toastr.error('UpcToken contract not deployed to detected network');
+				}
+			});
+			
+			// Load CatToken
+			$.getJSON('/files/abis/CatToken.json', async function(CatToken) {	
+				const catTokenData = CatToken.networks[networkId];
+				if(catTokenData) {
+					catToken = new web3.eth.Contract(CatToken.abi, catTokenData.address);
+					let catTokenBalance = await catToken.methods.balanceOf(myAccount).call();
+					$("#balanceCatToken").text(window.web3.utils.fromWei(catTokenBalance));
+					console.log('CatToken contract loaded successfully');
+				}
+				else {
+					toastr.error('CatToken contract not deployed to detected network');
+				}
+			});
+			
+			toastr.success('BarnaToken, FiberToken, UpcToken and CatToken', 'Contracts Deployed');
+		}
+		
+		// Event Listener: MetaMask Account Changed
+		window.ethereum.on('accountsChanged', async function (accounts) {
+			// MetaMask used account has changed
+			location.reload();
+		})
+	</script>
+	<!-- Start Blockchain -->
+	<script>
+		// Button Handler to Start Blockchain
+		$('#startBlockchain').click(async function() {
+			$('.start-blockchain-wrapper').remove();
+			await start(); /* Connect to the Blockchain */
+			$('.inner').css('display', 'block');
+			$('#mainTitle').text('My Account');
+		});
+	</script>
+	<!-- Get Open Bids -->
+	<script>
+		$('#operationViewOpenBids').click(async function() {
+			await $('#modalOpenBids .modal-open-bids-content-wrapper table tbody').empty(); // Clear Printed Bids
+			await getOpenBids();
+		});
+		
+		// Function that gets the Open Bids. Make an AJAX Request to the server
+		async function getOpenBids() {	
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = async function() {
+				// console.log('readyState: ' + this.readyState + ' & status: ' + this.status);
+				if (this.readyState == 4 && this.status == 200) {
+					var openBids = JSON.parse(this.responseText);
+					// toastr.success('Endpoint: /api/v1/bids/list', 'API request successful');
+					toastr.success('Getting open public bids...');
+					await writeOpenBidsToModal(openBids);
+				}
+				if (this.readyState == 4 && this.status != 200) { 
+					toastr.error('HTTP Code: ' + this.status, 'View Open Bids Error')
+				}
+			};
+				
+			xmlhttp.open('GET', '/run/view_open_bids', true);
+			xmlhttp.send();	
+		}
+		
+		async function writeOpenBidsToModal(openBids) {
+			// console.log(openBids);
+			openBids['bids'].forEach(async function(bid) {
+				var htmlTableRowBid = '<tr id="bid-'+ bid.id +'"> \
+						<td><span class="bid-owner">'+ bid.owner +'</span></td> \
+						<td><span class="bid-buy_amount">'+ bid.buy_amount +'</span></td> \
+						<td><span class="bid-buy_currency">'+ bid.buy_currency +'</span></td> \
+						<td><span class="bid-sell_amount">'+ bid.sell_amount +'</span></td> \
+						<td><span class="bid-sell_currency">'+ bid.sell_currency +'</span></td> \
+						<td><i data-bid_id="'+ bid.id +'" class="fas fa-check-circle bid-accept-button"></i></td> \
+					</tr>';
+				$('#modalOpenBids .modal-open-bids-content-wrapper table tbody').append(htmlTableRowBid);
+				
+				$('#bid-'+bid.id+' .bid-accept-button').click(async function() {
+					let bidId = $(this).data('bid_id');
+					await acceptOpenBid(bidId);
+				});
+				
+			});
+			$('#modalOpenBids').modal('show');
+		}
+	</script>
+	<!-- Create New Bids [and Allowance] -->
+	<script>
+		$('#operationCreateBid').click(async function() {
+			$('#modalCreateBid').modal('show');
+		});
+		
+		$("#createBidForm").submit(async function(event){
+			event.preventDefault();	
+		
+			var buy_amount = $('#createBidForm-buy_amount').val();
+			var buy_currency = $('#createBidForm-buy_currency').val();
+			var sell_amount = $('#createBidForm-sell_amount').val();
+			var sell_currency = $('#createBidForm-sell_currency').val();
+			var API_KEY = $('#createBidForm-API_KEY').val();
+			
+			await createNewBid(API_KEY, buy_amount, buy_currency, sell_amount, sell_currency);
+			
+			$('#createBidForm').trigger('reset');
+			
+			return false;
+		});
+		
+		// Function that creates a new Open Bids. Make an AJAX Request to the server
+		async function createNewBid(API_KEY, buy_amount, buy_currency, sell_amount, sell_currency) {	
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = async function() {
+				if (this.readyState == 4 && this.status == 201) {
+					// toastr.success('Endpoint: /api/v1/bids/new', 'API request successful');
+					
+					var newBid = JSON.parse(this.responseText);
+					// console.log(newBid);
+					toastr.success('ID: ' + newBid.data.id, 'New Bid Created');
+					
+					/* TMP until Escrow.sol is implemented */
+					await permitAllowanceToReceiverAccount(newBid.data);
+					var allowanceNewBid = 0;
+					if(newBid.data.sell_currency == 'BNC') { allowanceNewBid = await barnaToken.methods.allowance(myAccount, receiverAccount).call(); }
+					if(newBid.data.sell_currency == 'FBC') { allowanceNewBid = await fiberToken.methods.allowance(myAccount, receiverAccount).call(); }
+					if(newBid.data.sell_currency == 'UPC') { allowanceNewBid = await upcToken.methods.allowance(myAccount, receiverAccount).call(); }
+					if(newBid.data.sell_currency == 'CTC') { allowanceNewBid = await catToken.methods.allowance(myAccount, receiverAccount).call(); }
+					allowanceNewBid = window.web3.utils.fromWei(allowanceNewBid.toString());
+					toastr.success('Allowed: ' + allowanceNewBid + ' ' + newBid.data.sell_currency + ' to spender ' + receiverAccount, 'Allowance');
+					console.log('Allowed: ' + allowanceNewBid + ' ' + newBid.data.sell_currency + ' to spender ' + receiverAccount);
+				}
+				if (this.readyState == 4 && this.status != 201) { 
+					toastr.error('HTTP Code: ' + this.status, 'Create Bid Error')
+				}
+			};
+				
+			var formData = new FormData();
+			formData.append('buy_amount', buy_amount);
+			formData.append('buy_currency', buy_currency);
+			formData.append('sell_amount', sell_amount);
+			formData.append('sell_currency', sell_currency);
+			formData.append('API_KEY', API_KEY);
+			formData.append('requested_with', 'xmlhttprequest');
+				
+			xmlhttp.open('POST', '/run/create_new_bid', true);
+			xmlhttp.send(formData);	
+		}
+		
+		/* TMP until Escrow.sol is implemented */
+		async function permitAllowanceToReceiverAccount(bid) {
+			if(bid.sell_currency == 'BNC') {
+				bid.sell_amount = window.web3.utils.toWei(bid.sell_amount.toString());
+				await barnaToken.methods.approve(receiverAccount, bid.sell_amount).send({ from: myAccount }).on('transactionHash', (hash) => {
+					return true;
+				});
+			}
+			if(bid.sell_currency == 'FBC') {
+				bid.sell_amount = window.web3.utils.toWei(bid.sell_amount.toString());
+				await fiberToken.methods.approve(receiverAccount, bid.sell_amount).send({ from: myAccount }).on('transactionHash', (hash) => {
+					return true;
+				});
+			}
+			if(bid.sell_currency == 'UPC') {
+				bid.sell_amount = window.web3.utils.toWei(bid.sell_amount.toString());
+				await upcToken.methods.approve(receiverAccount, bid.sell_amount).send({ from: myAccount }).on('transactionHash', (hash) => {
+					return true;
+				});
+			}
+			if(bid.sell_currency == 'CTC') {
+				bid.sell_amount = window.web3.utils.toWei(bid.sell_amount.toString());
+				await catToken.methods.approve(receiverAccount, bid.sell_amount).send({ from: myAccount }).on('transactionHash', (hash) => {
+					return true;
+				});
+			}
+		}
+	</script>
+	<!-- Accept Open Bid and Trade -->
+	<script>
+		async function acceptOpenBid(bidId) {
+			var confirmation = confirm('Accept this open bid ?');
+			if(confirmation = true) {
+				toastr.success('Accepting Open Bid...');
+				$('#modalOpenBids').modal('hide');
+				await new Promise(r => setTimeout(r, 1500));
+				await blockBid(bidId);
+				await tradeAcceptedBid(bidId);
+			}
+		}
+	
+		async function blockBid(bidId) {
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = async function() {
+				if (this.readyState == 4 && this.status == 200) {
+					let blockedBid = JSON.parse(this.responseText);
+					// toastr.success('Endpoint: /api/v1/bids/block/<bid_id>', 'API request successful');
+					console.log('Bid ' + blockedBid.data.id + ' has been blocked');
+					toastr.success('Bid ' + blockedBid.data.id + ' has been blocked');
+					return true;
+				}
+				if (this.readyState == 4 && this.status != 200) { 
+					toastr.error('HTTP Code: ' + this.status, 'Block Bid Error');
+					return false;
+				}
+			};
+				
+			xmlhttp.open('GET', '/run/block_bid/' + bidId, true);
+			xmlhttp.send();	
+		}
+				
+		async function tradeAcceptedBid(bidId) {
+			// Get Bid Info from server
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = async function() {
+				if (this.readyState == 4 && this.status != 200) { 
+					toastr.error('HTTP Code: ' + this.status, 'Get Bid Info Error');
+					return false;
+				}
+				if (this.readyState == 4 && this.status == 200) {
+					var bid = JSON.parse(this.responseText).bids[0];
+					// toastr.success('Endpoint: /api/v1/bids/list/id/<bid_id>', 'API request successful')
+					
+					bid.buy_amount = window.web3.utils.toWei(bid.buy_amount.toString());
+					bid.sell_amount = window.web3.utils.toWei(bid.sell_amount.toString());
+					
+					/* TRADE */
+					await trade(bid.id, bid.buy_currency, bid.buy_amount, bid.sell_currency, bid.sell_amount);
+				}
+			};
+				
+			xmlhttp.open('GET', '/run/list_bid_by_id/' + bidId, true);
+			xmlhttp.send();	
+		}
+		
+		/* TRADE: Seller needs to have approved the proper allowance in advance */
+		async function trade(bidId, buyCurrency, buyAmount, sellCurrency, sellAmount) {
+			
+			/* Set Working Tokens for this trade */
+			let tokenToBeSold, tokenToBeBought;
+			
+			if		(buyCurrency == 'BNC') { tokenToBeSold = barnaToken; }
+			else if	(buyCurrency == 'FBC') { tokenToBeSold = fiberToken; }
+			else if	(buyCurrency == 'UPC') { tokenToBeSold = upcToken; 	 }
+			else if	(buyCurrency == 'CTC') { tokenToBeSold = catToken;   }
+			
+			if		(sellCurrency == 'BNC') { tokenToBeBought = barnaToken; }
+			else if	(sellCurrency == 'FBC') { tokenToBeBought = fiberToken; }
+			else if	(sellCurrency == 'UPC') { tokenToBeBought = upcToken;   }
+			else if	(sellCurrency == 'CTC') { tokenToBeBought = catToken;   }
+		
+			/* SELL my currency */
+			await tokenToBeSold.methods.transfer(receiverAccount, buyAmount).send({ from: myAccount }).on('transactionHash', async (hash) => {
+				console.log('Transfer SELL ' + (await tokenToBeSold.methods.name().call()) + ' done');
+				toastr.success('Sold ' + window.web3.utils.fromWei(buyAmount.toString()) + ' ' + (await tokenToBeSold.methods.symbol().call()));
+				await new Promise(r => setTimeout(r, 1000));
+				
+				/* BUY other's currency [Other has already aproved allowance to me] */
+				await tokenToBeBought.methods.transferFrom(receiverAccount, myAccount, sellAmount).send({ from: myAccount }).on('transactionHash', async (hash) => { 
+					console.log('Transfer BUY ' + (await tokenToBeBought.methods.name().call()) + ' done');
+					toastr.success('Bought ' + window.web3.utils.fromWei(sellAmount.toString()) + ' ' + (await tokenToBeBought.methods.symbol().call()));
+					await new Promise(r => setTimeout(r, 1000));
+					
+					console.log('Bid ' + bidId + ' traded');
+					toastr.success('Bid ' + bidId + ' traded');
+					await updateTokenBalances();
+					await unblockAndDeleteBid(bidId);	
+					return true
+				});
+			});	
+			/*
+			if(buyCurrency == 'FBC' && sellCurrency == 'BNC' && buyAmount >= 0 && sellAmount >= 0) {
+				* SELL my currency *
+				await fiberToken.methods.transfer(receiverAccount, buyAmount).send({ from: myAccount }).on('transactionHash', async (hash) => {
+					console.log('Transfer SELL FiberToken done');
+					toastr.success('Sold ' + window.web3.utils.fromWei(buyAmount.toString()) + ' FBC');
+					await new Promise(r => setTimeout(r, 1000));
+					
+					
+					* BUY other's currency [Other has already aproved allowance to me] *
+					await barnaToken.methods.transferFrom(receiverAccount, myAccount, sellAmount).send({ from: myAccount }).on('transactionHash', async (hash) => { 
+						console.log('Transfer BUY BarnaToken done');
+						toastr.success('Bought ' + window.web3.utils.fromWei(sellAmount.toString()) + ' BNC');
+						await new Promise(r => setTimeout(r, 1000));
+						
+						console.log('Bid ' + bidId + ' traded');
+						toastr.success('Bid ' + bidId + ' traded');
+						await updateTokenBalances();
+						await unblockAndDeleteBid(bidId);	
+						return true
+					});
+				});	
+			}
+			if(buyCurrency == 'BNC' && sellCurrency == 'FBC' && buyAmount >= 0 && sellAmount >= 0) {
+				* SELL my currency *
+				await barnaToken.methods.transfer(receiverAccount, buyAmount).send({ from: myAccount }).on('transactionHash', async (hash) => {
+					console.log('Transfer SELL BarnaToken done');
+					toastr.success('Sold ' + window.web3.utils.fromWei(buyAmount.toString()) + ' BNC');
+					await new Promise(r => setTimeout(r, 1000));
+					
+					* BUY other's currency [Other has already aproved allowance to me] *
+					await fiberToken.methods.transferFrom(receiverAccount, myAccount, sellAmount).send({ from: myAccount }).on('transactionHash', async (hash) => { 
+						console.log('Transfer BUY FiberToken done');
+						toastr.success('Bought ' + window.web3.utils.fromWei(sellAmount.toString()) + ' FBC');
+						await new Promise(r => setTimeout(r, 1000));
+						
+						console.log('Bid ' + bidId + ' traded');
+						toastr.success('Bid ' + bidId + ' traded');
+						await updateTokenBalances();
+						await unblockAndDeleteBid(bidId);
+						return true;
+					});
+				});	
+			}
+			return false; 
+			*/
+		}
+		
+		async function unblockAndDeleteBid(bidId) {
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = async function() {
+				if (this.readyState == 4 && this.status == 200) {
+					let deletedBid = JSON.parse(this.responseText);
+					// toastr.success('Endpoint: /api/v1/bids/unblock/<bid_id>', 'API request successful');
+					console.log('Bid ' + deletedBid.data.id + ' deleted from database');
+					toastr.success('Bid ' + deletedBid.data.id + ' has been unblocked and deleted from the database');
+					return true;
+				}
+				if (this.readyState == 4 && this.status != 200) { 
+					toastr.error('HTTP Code: ' + this.status, 'Unblock&Delete Bid Error');
+					return false;
+				}
+			};
+				
+			xmlhttp.open('GET', '/run/unblock_and_delete_bid/' + bidId, true);
+			xmlhttp.send();	
+		}
+
+		async function updateTokenBalances() {
+			let barnaTokenBalance = await barnaToken.methods.balanceOf(myAccount).call();
+			let fiberTokenBalance = await fiberToken.methods.balanceOf(myAccount).call();
+			let upcTokenBalance = await upcToken.methods.balanceOf(myAccount).call();
+			let catTokenBalance = await catToken.methods.balanceOf(myAccount).call();
+
+			let currentBNC = parseInt($('#balanceBarnaToken').text());
+			let updatedBNC = parseInt(window.web3.utils.fromWei(barnaTokenBalance));
+			animateBalance($("#balanceBarnaToken"), currentBNC, updatedBNC, 1500);
+			
+			let currentFBC = parseInt($('#balanceFiberToken').text());
+			let updatedFBC = parseInt(window.web3.utils.fromWei(fiberTokenBalance));
+			animateBalance($("#balanceFiberToken"), currentFBC, updatedFBC, 1500);
+
+			let currentUPC = parseInt($('#balanceUpcToken').text());
+			let updatedUPC = parseInt(window.web3.utils.fromWei(upcTokenBalance));
+			animateBalance($("#balanceUpcToken"), currentUPC, updatedUPC, 1500);
+			
+			let currentCTC = parseInt($('#balanceCatToken').text());
+			let updatedCTC = parseInt(window.web3.utils.fromWei(catTokenBalance));
+			animateBalance($("#balanceCatToken"), currentCTC, updatedCTC, 1500);
+		}
+		
+	</script>
+	<!-- Log Out -->
+	<script>
+		$("#accountLogout").click(function(event) {
+			event.preventDefault();				
+			logOut($(this));
+			return false;
+		});
+
+		function logOut() {	
+			var xmlhttp = new XMLHttpRequest();
+			xmlhttp.onreadystatechange = function() {
+				if (this.readyState == 4 && this.status == 200) {
+					window.location.href = "/login?logout=1";
+					return true;
+				}
+				if (this.readyState == 4 && this.status != 200) {
+					let res = JSON.parse(this.responseText);
+					toastr.error(res.error.code + ': ' + res.error.message, toastr_title); 
+					return false;
+				}
+			};
+			
+			var formData = new FormData();
+			formData.append("logout-form-submitted", "submit");
+			formData.append("requested_with", "xmlhttprequest");
+							
+			xmlhttp.open("POST", "/run/logout", true);
+			xmlhttp.send(formData);	
+		}
+	</script>
+	<!-- Aux Scripts -->
+	<script>
+		// Toastr.JS options
+		const toastr_title = 'iToken says';	
+		$(document).ready(function() {
+			toastr.options.timeOut = 6000;
+			toastr.options.extendedTimeOut = 1750;
+			toastr.options.positionClass = 'toast-bottom-right';
+			toastr.options.closeButton = true;
+			toastr.options.onclick = function() { }	
+			toastr.options.preventDuplicates = true;
+			toastr.options.progressBar = true;
+		});
+
+		// Number animation
+		function animateBalance(obj, start, end, duration) {
+			let startTimestamp = null;
+			const step = (timestamp) => {
+				if (!startTimestamp) { startTimestamp = timestamp; }
+				const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+				// obj.innerHTML = Math.floor(progress * (end - start) + start);
+				obj.text(Math.floor(progress * (end - start) + start));
+				if (progress < 1) { 
+					window.requestAnimationFrame(step);
+				}
+			};
+			window.requestAnimationFrame(step);
+		}
+		
+		// URL GET ['login']
+		if(typeof getSearchParams('login') !== 'undefined') {
+			toastr.success('You have logged in successfully', toastr_title, {timeOut: 12500, extendedTimeOut: 5000} );
+			history.replaceState && history.replaceState(null, '', location.pathname + location.search.replace(/[\?&]login=[^&]+/, '').replace(/^&/, '?'));
+		}
+		
+		// GET URL Paramters
+		function getSearchParams(k){
+			var p={};
+			location.search.replace(/[?&]+([^=&]+)=([^&]*)/gi,function(s,k,v){p[k]=v})
+			return k?p[k]:p;
+		}
+	</script>
+</body>
+</html>

@@ -1,0 +1,122 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:http/http.dart';
+import 'package:web3dart/web3dart.dart';
+import 'package:english_words/english_words.dart';
+
+void main() {
+  runApp(MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  // This widget is the root of your application.											 
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'PTI | Ganache App',
+	  theme: ThemeData(
+		primarySwatch: Colors.blue,
+        visualDensity: VisualDensity.adaptivePlatformDensity,
+	  ),
+	  home: MyHomePage(title: "PTI Ganache App")
+    );
+  }
+}
+
+class MyHomePage extends StatefulWidget {
+  MyHomePage({Key key, this.title}) : super(key: key);
+  final String title;
+  @override
+  _MyHomePageState createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  Client httpClient;
+  Web3Client ethClient;
+  
+  var myAccountCredentials;
+  EthereumAddress myAccount;
+  
+  var fiberTokenContract;
+  
+  String lastTransactionHash;
+	
+  @override
+  void initState() async {
+    super.initState();
+	httpClient = new Client();
+	ethClient = new Web3Client("http://10.4.41.142:8545", httpClient);
+	
+	// Account "0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0"
+    myAccountCredentials = await ethClient.credentialsFromPrivateKey("0x6cbed15c793ce57650b9877cf6fa156fbef513c4e6134f022a85b1ffdd59b2a1");
+	myAccount = await myAccountCredentials.extractAddress();
+	
+	fiberTokenContract = await loadContract();
+  }
+	
+  Future<DeployedContract> loadContract() async {
+    String abiCode = await rootBundle.loadString("abis/FiberToken.json");
+    String contractAddress = "0xD13ebb5C39fB00C06122827E1cbD389930C9E0E3";
+
+	//final File abiFile = File(join(dirname(Platform.script.path), 'abi.json'));
+    final contract = DeployedContract(ContractAbi.fromJson(abiCode, "FiberToken"), EthereumAddress.fromHex(contractAddress));
+    return contract;
+  }	
+  
+  Future<List<dynamic>> query(String functionName, List<dynamic> args) async {
+    final contract = await loadContract();
+    final ethFunction = contract.function(functionName);
+    final data = await ethClient.call(contract: contract, function: ethFunction, params: args);
+    return data;
+  }
+  
+  Future<List<dynamic>> getBalanceOf(String targetAddressHex) async {
+    EthereumAddress address = EthereumAddress.fromHex(targetAddressHex);
+    List<dynamic> result = await query("balanceOf", [address]);
+    return result;
+  }
+  
+  @override
+  Widget build(BuildContext context) {
+    final wordPair = WordPair.random();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(widget.title),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            FutureBuilder(
+              future: getBalanceOf("0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0"),
+              builder: (context, snapshot) {
+                if (snapshot.hasData) {
+                  return Text('You have this many FiberToken ${snapshot.data[0]}');
+                } else
+                  return Text('Loading...');
+              },
+            ),
+            RaisedButton(
+              child: Text("Send some MetaCoins"),
+              onPressed: () async {
+                // var result = await sendCoind("0x2957e018f0B5964C34BFF3BD03e1B39cBbd6268B", 2);
+                setState(() {
+                  // lastTransactionHash = result;
+                  lastTransactionHash = "yeyeye";
+                });
+              },
+            ),
+            // Text("Last transaction hash: $lastTransactionHash")
+			Text(wordPair.asPascalCase),
+			Text(ethClient.call(contract: contract, function: contract.function("symbol"), params: []))
+          ],
+        ),
+      ),
+    );
+  }
+  
+  
+  
+  
+  
+}

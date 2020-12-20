@@ -69,8 +69,8 @@ docker cp <containerId>:/file/path/within/container /host/path/target
 
 ```
 truffle compile
-truffle migrate --reset
 truffle networks --clean
+truffle migrate -f X --to Y
 ```
 
 ## Flutter WebApp

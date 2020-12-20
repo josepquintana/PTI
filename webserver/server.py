@@ -45,6 +45,7 @@ API endpoints:
         /login
             /
             /cookie
+        /login2
     
 ============================================================================================================================================================    
     
@@ -477,6 +478,51 @@ def api_users_login():
 		'data': { 
             "email": db_query_full[0]['email'],
             "account": db_query_full[0]['account']
+        },
+        'server_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	}
+    
+    return jsonify(response), 200
+
+
+# API -> Check if specified log in data is valid and return ALL info [WARNING_DEV_MODE: will return all user info including hashed password]
+@app.route('/api/v1/users/login_alt', methods=['POST'])
+def api_users_login_alt():    
+    # Fetch all the POST parameters
+    email              = request.form.get("email", type = str)
+    password           = request.form.get("password", type = str)
+    
+    # Check if specified parameters are set
+    if email is None or password is None:
+        abort(400)
+    
+    # Check email format
+    if(not re.match(r"[^@]+@[^@]+\.[^@]+", email)):
+        abort(422)
+        
+    # Check if user log in email is registered
+    db_query_email = usersCollection.find({ "email": email })
+    if db_query_email.count() == 0:
+        abort(404)
+    
+    # Check if the specified password is correct
+    hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+    db_query_full = usersCollection.find({ "email": email, "password": hashed_password })
+    if db_query_full.count() == 0:
+        abort(403)
+
+    # Get user account private_key
+    db_query_private_key = accountsCollection.find({ "account": db_query_full[0]['account'] })
+    if db_query_private_key.count() == 0:
+        abort(503)
+        
+    response = { 
+		'user': 'authenticated',
+		'data': { 
+            "email": db_query_full[0]['email'],
+            "account": db_query_full[0]['account'],
+            "private_key": db_query_private_key[0]['private_key'],
+            "api_key": db_query_full[0]['api_key']
         },
         'server_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 	}

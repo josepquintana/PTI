@@ -1,66 +1,158 @@
-pragma solidity >=0.4.21;
+pragma solidity >=0.4.22 <0.7.0;
 
 import "./BarnaToken.sol";
 import "./FiberToken.sol";
+import "./UpcToken.sol";
+import "./CatToken.sol";
 
 contract Escrow {
 
-    enum PaymentStatus { Pending, Completed, Refunded }
-
-    event PaymentCreation(uint indexed orderId, address indexed customer, uint value);
-    event PaymentCompletion(uint indexed orderId, address indexed customer, uint value, PaymentStatus status,address indexed reciver);
-
-    struct Payment {
-        address customer;
-        uint value;
-        PaymentStatus status;
-        bool refundApproved;
-    }
-    mapping(uint => Payment) public payments;
-    BarnaToken public currency;
-    FiberToken public currency2;
+    string public name = "Escrow";
     
-    address public collectionAddress;
+    BarnaToken private barnaToken;
+    FiberToken private fiberToken;
+    UpcToken private upcToken;
+    CatToken private catToken;
+    
+    uint256 private balanceBNC;
+    uint256 private balanceFBC;
+    uint256 private balanceUPC;
+    uint256 private balanceCTC;
+    
+	event EscrowInit(address escrowAddress);
+ 
+    struct openBidData {
+        uint256 bidId;
+        address ownerAddress;
+        uint256 sellAmount;
+		string sellCurrency;
+    }
+    
+    openBidData[] public payments;
+    	
+	constructor(BarnaToken _barnaToken, FiberToken _fiberToken, UpcToken _upcToken, CatToken _catToken) public {
+        emit EscrowInit(address(this));
+		
+		// payments = new openBidData[](maxSize);
+		// availableCryptocurrencies = ["BNC", "FBC", "UPC", "CTC"];
+		
+		barnaToken = _barnaToken;
+		fiberToken = _fiberToken;
+		upcToken = _upcToken;
+		catToken = _catToken;
+		
+		balanceBNC = barnaToken.balanceOf(address(this));
+		balanceFBC = fiberToken.balanceOf(address(this));
+		balanceUPC = upcToken.balanceOf(address(this));
+		balanceCTC = catToken.balanceOf(address(this));
+		
+		require(true, "Escrow Created");
+    }
 
-    function Escroww(string memory moneda, address _collectionAddress, FiberToken a, BarnaToken b) public {
-        if(keccak256(abi.encodePacked((moneda))) == "barna"){currency = b;
-            
+    function createPayment(uint256 bidId, uint256 sellAmount, string memory sellCurrency) public returns (bool created) { 
+        /* Verify that Escrow balanceOf of working token has increased by sellAmount */
+        require(verifyReceivedSellAmount(sellAmount, sellCurrency) == true, "Escrow: Have not received 'sellAmount'");
+        require(sellAmount >= 0, "sellAmount cannot be 0");
+        require(isValidCurrency(sellCurrency) == true, "Invalid sellCurrency");
+		/* Add new openBid data to the main array */
+        openBidData memory bid = openBidData(bidId, msg.sender, sellAmount, sellCurrency);
+        payments.push(bid);
+		return true;
+    }
+    
+    // TO DO: Add verification method to check if the SELL transfer from acceptingUser has been done
+    function requestPayment(uint256 bidId) public returns (bool completed) {
+        for (uint256 i = 0; i < payments.length; i++) { 
+            if (payments[i].bidId == bidId) {
+				/* Send staked 'sellAmount' consisting of the SELL transfer from the owner user to the user accepting the open bid 'bidId' */
+				sendPaymentToRequestingUser(msg.sender, payments[i].sellAmount, payments[i].sellCurrency);
+				/* Delete this openBid data from the main array once completely traded */
+				deleteOpenBidFromPayments(i);
+                return true;
+            }
         }
-        if(keccak256(abi.encodePacked((moneda))) == "fiber")currency2 = a;
-        collectionAddress = _collectionAddress;
+        return false;
     }
-
-    function createPayment(uint _orderId, address _customer, uint _value) external  {
-        payments[_orderId] = Payment(_customer, _value, PaymentStatus.Pending, false);
-        emit PaymentCreation(_orderId, _customer, _value);
+    
+    function getPaymentOwner(uint256 bidId) public returns (address ownerAddress) {
+        for (uint256 i = 0; i < payments.length; i++) { 
+            if (payments[i].bidId == bidId) { return payments[i].ownerAddress; }
+        }
+        return address(0);
     }
-
-    function release(uint _orderId, string  calldata moneda) external {
-        completePayment(_orderId, collectionAddress /*PaymentStatus.Completed*/, moneda);
+    
+   function getPaymentSellAmount(uint256 bidId) public returns (uint256 sellAmount) {
+        for (uint256 i = 0; i < payments.length; i++) { 
+            if (payments[i].bidId == bidId) { return payments[i].sellAmount; }
+        }
+        return 0; // CAUTION!!
     }
-
-    function refund(uint _orderId, string  calldata moneda) external {
-        completePayment(_orderId, msg.sender /*PaymentStatus.Refunded*/, moneda);
+   
+    function verifyReceivedSellAmount(uint256 sellAmount, string memory sellCurrency) internal returns (bool) {
+        if (keccak256(abi.encodePacked(sellCurrency)) == keccak256(abi.encodePacked(barnaToken.symbol()))) { 
+            require(balanceBNC + sellAmount == barnaToken.balanceOf(address(this)), "SELL Payment Not Received");
+            balanceBNC = balanceBNC + sellAmount;
+            return true;
+        }
+        else if (keccak256(abi.encodePacked(sellCurrency)) == keccak256(abi.encodePacked(fiberToken.symbol()))) { 
+            require(balanceFBC + sellAmount == fiberToken.balanceOf(address(this)), "SELL Payment Not Received");
+            balanceFBC = balanceFBC + sellAmount;
+            return true;
+        }
+        else if (keccak256(abi.encodePacked(sellCurrency)) == keccak256(abi.encodePacked(upcToken.symbol()))) { 
+            require(balanceUPC + sellAmount == upcToken.balanceOf(address(this)), "SELL Payment Not Received");
+            balanceUPC = balanceUPC + sellAmount;
+            return true;
+        }
+        else if (keccak256(abi.encodePacked(sellCurrency)) == keccak256(abi.encodePacked(catToken.symbol()))) { 
+            require(balanceCTC + sellAmount == catToken.balanceOf(address(this)), "SELL Payment Not Received");
+            balanceCTC = balanceCTC + sellAmount;
+            return true;
+        }
+        return false;
     }
-
-    function approveRefund(uint _orderId) external {
-        require(msg.sender == collectionAddress);
-        Payment storage payment = payments[_orderId];
-        payment.refundApproved = true;
+	
+	function sendPaymentToRequestingUser(address receiver, uint256 sellAmount, string memory sellCurrency) internal returns (bool) {
+		if (keccak256(abi.encodePacked(sellCurrency)) == keccak256(abi.encodePacked(barnaToken.symbol()))) { 
+			barnaToken.transfer(receiver, sellAmount);
+			balanceBNC = balanceBNC - sellAmount;
+            return true;
+        }
+        else if (keccak256(abi.encodePacked(sellCurrency)) == keccak256(abi.encodePacked(fiberToken.symbol()))) { 
+            fiberToken.transfer(receiver, sellAmount);
+            balanceFBC = balanceFBC - sellAmount;
+            return true;
+        }
+        else if (keccak256(abi.encodePacked(sellCurrency)) == keccak256(abi.encodePacked(upcToken.symbol()))) { 
+            upcToken.transfer(receiver, sellAmount);
+            balanceUPC = balanceUPC - sellAmount;
+            return true;
+        }
+        else if (keccak256(abi.encodePacked(sellCurrency)) == keccak256(abi.encodePacked(catToken.symbol()))) { 
+			catToken.transfer(receiver, sellAmount);
+            balanceCTC = balanceCTC - sellAmount;
+            return true;
+        }
+		return false;
+	}
+	
+	function isValidCurrency(string memory currency) internal returns (bool) {
+        if (keccak256(abi.encodePacked(currency)) == keccak256(abi.encodePacked(barnaToken.symbol()))) { return true; }
+        else if (keccak256(abi.encodePacked(currency)) == keccak256(abi.encodePacked(fiberToken.symbol()))) { return true; }
+        else if (keccak256(abi.encodePacked(currency)) == keccak256(abi.encodePacked(upcToken.symbol()))) { return true; }
+        else if (keccak256(abi.encodePacked(currency)) == keccak256(abi.encodePacked(catToken.symbol()))) { return true; }
+        else { return false; }
     }
-
-    function completePayment(uint _orderId, address _receiver /*PaymentStatus _status*/, string memory coin) public {
-        Payment storage payment = payments[_orderId];
-        //require(payment.customer == msg.sender);
-        //require(payment.status == PaymentStatus.Pending);
-        //if (_status == PaymentStatus.Refunded) {
-        //    require(payment.refundApproved);
-        //}
-        PaymentStatus _status = PaymentStatus.Completed;
-        if(keccak256(abi.encodePacked((coin))) == "barna")
-        currency.transfer(_receiver, payment.value);
-        else if(keccak256(abi.encodePacked((coin))) == "fiber")currency2.transfer(_receiver, payment.value);
-        payment.status = _status;
-        emit PaymentCompletion(_orderId, payment.customer, payment.value, _status, _receiver);
+ 
+	function deleteOpenBidFromPayments(uint256 index) internal returns (bool) {
+        require(index < payments.length, "Array index out of bounds");
+        for (uint256 i = index; i < payments.length - 1; i++) {
+            payments[i] = payments[i+1];
+        }
+        delete payments[payments.length-1];
+        payments.length--;
+        return true;
     }
+ 
 }
+

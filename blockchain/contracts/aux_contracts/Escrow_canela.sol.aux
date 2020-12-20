@@ -1,0 +1,66 @@
+pragma solidity >=0.4.21;
+
+import "./BarnaToken.sol";
+import "./FiberToken.sol";
+
+contract Escrow {
+
+    enum PaymentStatus { Pending, Completed, Refunded }
+
+    event PaymentCreation(uint indexed orderId, address indexed customer, uint value);
+    event PaymentCompletion(uint indexed orderId, address indexed customer, uint value, PaymentStatus status,address indexed reciver);
+
+    struct Payment {
+        address customer;
+        uint value;
+        PaymentStatus status;
+        bool refundApproved;
+    }
+    mapping(uint => Payment) public payments;
+    BarnaToken public currency;
+    FiberToken public currency2;
+    
+    address public collectionAddress;
+
+    function Escroww(string memory moneda, address _collectionAddress, FiberToken a, BarnaToken b) public {
+        if(keccak256(abi.encodePacked((moneda))) == "barna"){currency = b;
+            
+        }
+        if(keccak256(abi.encodePacked((moneda))) == "fiber")currency2 = a;
+        collectionAddress = _collectionAddress;
+    }
+
+    function createPayment(uint _orderId, address _customer, uint _value) external  {
+        payments[_orderId] = Payment(_customer, _value, PaymentStatus.Pending, false);
+        emit PaymentCreation(_orderId, _customer, _value);
+    }
+
+    function release(uint _orderId, string  calldata moneda) external {
+        completePayment(_orderId, collectionAddress /*PaymentStatus.Completed*/, moneda);
+    }
+
+    function refund(uint _orderId, string  calldata moneda) external {
+        completePayment(_orderId, msg.sender /*PaymentStatus.Refunded*/, moneda);
+    }
+
+    function approveRefund(uint _orderId) external {
+        require(msg.sender == collectionAddress);
+        Payment storage payment = payments[_orderId];
+        payment.refundApproved = true;
+    }
+
+    function completePayment(uint _orderId, address _receiver /*PaymentStatus _status*/, string memory coin) public {
+        Payment storage payment = payments[_orderId];
+        //require(payment.customer == msg.sender);
+        //require(payment.status == PaymentStatus.Pending);
+        //if (_status == PaymentStatus.Refunded) {
+        //    require(payment.refundApproved);
+        //}
+        PaymentStatus _status = PaymentStatus.Completed;
+        if(keccak256(abi.encodePacked((coin))) == "barna")
+        currency.transfer(_receiver, payment.value);
+        else if(keccak256(abi.encodePacked((coin))) == "fiber")currency2.transfer(_receiver, payment.value);
+        payment.status = _status;
+        emit PaymentCompletion(_orderId, payment.customer, payment.value, _status, _receiver);
+    }
+}

@@ -358,7 +358,7 @@ def api_bids_delete(bid_id):
     return jsonify(response), 200
     
     
-# API -> List all users
+# API -> List all users [WARNING_DEV_MODE: will return all user info including hashed password]
 @app.route('/api/v1/users/list', methods=['GET'])
 def api_users_list():
     db_query = usersCollection.find({}).sort("_id")
@@ -367,7 +367,7 @@ def api_users_list():
     return response, 200
 
 
-# API -> List user with email <USER_EMAIL>
+# API -> List user with email <USER_EMAIL> [WARNING_DEV_MODE: will return all user info including hashed password]
 @app.route('/api/v1/users/list/email/<user_email>', methods=['GET'])
 def api_users_list_email(user_email):
     db_query = usersCollection.find({ "email": user_email })
@@ -634,7 +634,7 @@ def set_ids_from_objectIds(db_query_json, root_key):
     response = json.dumps(response, indent = 2)
     return response
         
-        
+# WARNING: Do not set Header application/json !
 def authenticate_user_api_key(API_KEY):
     db_query = usersCollection.find({ "api_key": API_KEY }, { "email": 1, "api_key": 1 })
     if db_query.count() > 0:

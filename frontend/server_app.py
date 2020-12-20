@@ -167,7 +167,16 @@ def run_logout():
         
     return response
    
-    
+   
+@app.route('/run/get_address_from_email/<email>', methods=['GET'])
+def run_get_address_from_email(email):  
+    res = requests.get('http://10.4.41.142/api/v1/users/list/email/' + email)
+    if res.status_code == 200:
+        return json.loads(res.text)['users'][0]['account'], 200
+    else:
+        return res.text, res.status_code
+     
+  
 #############################################################################################################################################################
 """ CHECK LOG IN COOKIE VALIDITY """
 #############################################################################################################################################################
@@ -264,6 +273,10 @@ def files_UpcToken():
 @app.route('/files/abis/CatToken.json', methods=['GET'])
 def files_CatToken():
     return send_from_directory("abis", "CatToken.json")
+    
+@app.route('/files/abis/Escrow.json', methods=['GET'])
+def files_Escrow():
+    return send_from_directory("abis", "Escrow.json")
     
 #############################################################################################################################################################
 """ TEST ROUTE """

@@ -24,7 +24,7 @@ module.exports = async function(deployer, network, accounts)
 	const catToken = await CatToken.deployed();
 	
 	// Deploy Escrow Contract
-	await deployer.deploy(Escrow);
+	await deployer.deploy(Escrow, barnaToken.address, fiberToken.address, upcToken.address, catToken.address);
 	const escrow = await Escrow.deployed();
 
 	// REMARK: initially all Tokens are assigned to the account that deployed the contracts		

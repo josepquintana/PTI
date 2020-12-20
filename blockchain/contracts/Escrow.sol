@@ -22,7 +22,7 @@ contract Escrow {
 	event EscrowInit(address escrowAddress);
  
     struct openBidData {
-        uint256 bidId;
+        string bidId;
         address ownerAddress;
         uint256 sellAmount;
 		string sellCurrency;
@@ -49,7 +49,7 @@ contract Escrow {
 		require(true, "Escrow Created");
     }
 
-    function createPayment(uint256 bidId, uint256 sellAmount, string memory sellCurrency) public returns (bool created) { 
+    function createPayment(string memory bidId, uint256 sellAmount, string memory sellCurrency) public returns (bool created) { 
         /* Verify that Escrow balanceOf of working token has increased by sellAmount */
         require(verifyReceivedSellAmount(sellAmount, sellCurrency) == true, "Escrow: Have not received 'sellAmount'");
         require(sellAmount >= 0, "sellAmount cannot be 0");
@@ -61,9 +61,9 @@ contract Escrow {
     }
     
     // TO DO: Add verification method to check if the SELL transfer from acceptingUser has been done
-    function requestPayment(uint256 bidId) public returns (bool completed) {
+    function requestPayment(string memory bidId) public returns (bool completed) {
         for (uint256 i = 0; i < payments.length; i++) { 
-            if (payments[i].bidId == bidId) {
+            if (keccak256(abi.encodePacked(payments[i].bidId)) == keccak256(abi.encodePacked(bidId))) {
 				/* Send staked 'sellAmount' consisting of the SELL transfer from the owner user to the user accepting the open bid 'bidId' */
 				sendPaymentToRequestingUser(msg.sender, payments[i].sellAmount, payments[i].sellCurrency);
 				/* Delete this openBid data from the main array once completely traded */
@@ -74,38 +74,38 @@ contract Escrow {
         return false;
     }
     
-    function getPaymentOwner(uint256 bidId) public returns (address ownerAddress) {
+    function getPaymentOwner(string memory bidId) public returns (address ownerAddress) {
         for (uint256 i = 0; i < payments.length; i++) { 
-            if (payments[i].bidId == bidId) { return payments[i].ownerAddress; }
+            if (keccak256(abi.encodePacked(payments[i].bidId)) == keccak256(abi.encodePacked(bidId))) { return payments[i].ownerAddress; }
         }
         return address(0);
     }
     
-   function getPaymentSellAmount(uint256 bidId) public returns (uint256 sellAmount) {
+   function getPaymentSellAmount(string memory bidId) public returns (uint256 sellAmount) {
         for (uint256 i = 0; i < payments.length; i++) { 
-            if (payments[i].bidId == bidId) { return payments[i].sellAmount; }
+            if (keccak256(abi.encodePacked(payments[i].bidId)) == keccak256(abi.encodePacked(bidId))) { return payments[i].sellAmount; }
         }
         return 0; // CAUTION!!
     }
    
-    function verifyReceivedSellAmount(uint256 sellAmount, string memory sellCurrency) internal returns (bool) {
+    function verifyReceivedSellAmount(uint256 sellAmount, string memory sellCurrency) public returns (bool) {
         if (keccak256(abi.encodePacked(sellCurrency)) == keccak256(abi.encodePacked(barnaToken.symbol()))) { 
-            require(balanceBNC + sellAmount == barnaToken.balanceOf(address(this)), "SELL Payment Not Received");
+            require(balanceBNC + sellAmount == barnaToken.balanceOf(address(this)), "Payment Not Received");
             balanceBNC = balanceBNC + sellAmount;
             return true;
         }
         else if (keccak256(abi.encodePacked(sellCurrency)) == keccak256(abi.encodePacked(fiberToken.symbol()))) { 
-            require(balanceFBC + sellAmount == fiberToken.balanceOf(address(this)), "SELL Payment Not Received");
+            require(balanceFBC + sellAmount == fiberToken.balanceOf(address(this)), "Payment Not Received");
             balanceFBC = balanceFBC + sellAmount;
             return true;
         }
         else if (keccak256(abi.encodePacked(sellCurrency)) == keccak256(abi.encodePacked(upcToken.symbol()))) { 
-            require(balanceUPC + sellAmount == upcToken.balanceOf(address(this)), "SELL Payment Not Received");
+            require(balanceUPC + sellAmount == upcToken.balanceOf(address(this)), "Payment Not Received");
             balanceUPC = balanceUPC + sellAmount;
             return true;
         }
         else if (keccak256(abi.encodePacked(sellCurrency)) == keccak256(abi.encodePacked(catToken.symbol()))) { 
-            require(balanceCTC + sellAmount == catToken.balanceOf(address(this)), "SELL Payment Not Received");
+            require(balanceCTC + sellAmount == catToken.balanceOf(address(this)), "Payment Not Received");
             balanceCTC = balanceCTC + sellAmount;
             return true;
         }
@@ -144,7 +144,7 @@ contract Escrow {
         else { return false; }
     }
  
-	function deleteOpenBidFromPayments(uint256 index) internal returns (bool) {
+	function deleteOpenBidFromPayments(uint256 index) public returns (bool) {
         require(index < payments.length, "Array index out of bounds");
         for (uint256 i = index; i < payments.length - 1; i++) {
             payments[i] = payments[i+1];
@@ -155,4 +155,3 @@ contract Escrow {
     }
  
 }
-

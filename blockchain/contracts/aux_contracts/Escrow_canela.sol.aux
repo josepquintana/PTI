@@ -23,15 +23,18 @@ contract Escrow {
     address public collectionAddress;
 
     function Escroww(string memory moneda, address _collectionAddress, FiberToken a, BarnaToken b) public {
-        if(keccak256(abi.encodePacked((moneda))) == "barna"){currency = b;
+       /* if(keccak256(abi.encodePacked((moneda))) == "barna"){*/currency = b;
             
-        }
+        /*
         if(keccak256(abi.encodePacked((moneda))) == "fiber")currency2 = a;
+*/
         collectionAddress = _collectionAddress;
+
     }
 
     function createPayment(uint _orderId, address _customer, uint _value) external  {
         payments[_orderId] = Payment(_customer, _value, PaymentStatus.Pending, false);
+	currency.transfer(addres(this), _value);
         emit PaymentCreation(_orderId, _customer, _value);
     }
 
@@ -51,13 +54,13 @@ contract Escrow {
 
     function completePayment(uint _orderId, address _receiver /*PaymentStatus _status*/, string memory coin) public {
         Payment storage payment = payments[_orderId];
-        //require(payment.customer == msg.sender);
+        require(payment.customer == msg.sender);
         //require(payment.status == PaymentStatus.Pending);
         //if (_status == PaymentStatus.Refunded) {
-        //    require(payment.refundApproved);
+         //   require(payment.refundApproved);
         //}
         PaymentStatus _status = PaymentStatus.Completed;
-        if(keccak256(abi.encodePacked((coin))) == "barna")
+        //if(keccak256(abi.encodePacked((coin))) == "barna")
         currency.transfer(_receiver, payment.value);
         else if(keccak256(abi.encodePacked((coin))) == "fiber")currency2.transfer(_receiver, payment.value);
         payment.status = _status;

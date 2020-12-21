@@ -13,6 +13,7 @@ ssh-add ~/.ssh/id_rsa_pti_server
 git fetch && git checkout origin/master -- ./webserver/Dockerfile_WEBSERVER
 git fetch && git checkout origin/master -- ./blockchain/Dockerfile_BLOCKCHAIN
 git fetch && git checkout origin/master -- ./database/Dockerfile_DATABASE
+git fetch && git checkout origin/master -- ./frontend/Dockerfile_FRONTEND
 ```
 
 ## Build

@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>iToken | Ddashboard</title>
+	<title>iToken | Dashboard</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">				   
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -153,7 +153,7 @@
 		}
 		#modalOpenBids .modal-dialog,
 		#modalViewEscrow .modal-dialog {
-			max-width: 85vw;
+			max-width: 65vw;
 		}
 		#modalOpenBids .modal-content,
 		#modalCreateBid .modal-content,
@@ -569,7 +569,7 @@
 		window.ethereum.on('accountsChanged', async function (accounts) {
 			// MetaMask used account has changed
 			await new Promise(r => setTimeout(r, 250));
-			location.reload();
+			//location.reload();
 			await new Promise(r => setTimeout(r, 2500));
 		})
 	</script>
@@ -1103,7 +1103,7 @@
 		// Toastr.JS options
 		const toastr_title = 'iToken says';	
 		$(document).ready(function() {
-			toastr.options.timeOut = 10000;
+			toastr.options.timeOut = 12500;
 			toastr.options.extendedTimeOut = 10000;
 			toastr.options.positionClass = 'toast-bottom-right';
 			toastr.options.closeButton = true;
@@ -1129,7 +1129,7 @@
 		
 		// URL GET ['login']
 		if(typeof getSearchParams('login') !== 'undefined') {
-			toastr.success('You have logged in successfully', toastr_title, {timeOut: 12500, extendedTimeOut: 5000} );
+			toastr.success('You have logged in successfully', toastr_title, {timeOut: 15000, extendedTimeOut: 5000} );
 			history.replaceState && history.replaceState(null, '', location.pathname + location.search.replace(/[\?&]login=[^&]+/, '').replace(/^&/, '?'));
 		}
 		

@@ -26,6 +26,9 @@ docker build -f ./blockchain/Dockerfile_BLOCKCHAIN --no-cache --progress=plain -
 ```
 docker build -f ./database/Dockerfile_DATABASE --no-cache --progress=plain -t pti_database . | more
 ```
+```
+docker build -f ./frontend/Dockerfile_FRONTEND --no-cache --progress=plain -t pti_frontend . | more
+```
 
 ## Run
 
@@ -37,6 +40,9 @@ docker run --name pti_blockchain -d -p 8545:8545 pti_blockchain
 ```
 ```
 docker run --name pti_database -d -p 27017:27017 pti_database
+```
+```
+docker run --name pti_frontend -d -p 80:80 pti_frontend
 ```
 
 
@@ -99,10 +105,14 @@ flutter build web
 - [x] Dockerfile for Blockchain (truffle)
 - [x] Simple API endpoint
 - [x] Truffe Process start
-- [] web3dart
-- [] Recompile contracts and get abi address
-- [] Think how will user_2 approve SELL
-- [] Use Docker Hub
-- [] IPFS
-- [] Private Blockchain
+- [x] web3js
+- [x] Recompile contracts and get abi address
+- [x] Create, block, unblock and delete Bids
+- [x] Think how will user_2 approve SELL
+- [x] Escrow.sol
+- [x] User management
+- [ ] Flutter
+- [ ] Use Docker Hub
+- [ ] IPFS
+- [ ] Private Blockchain
 

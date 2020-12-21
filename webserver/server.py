@@ -45,7 +45,8 @@ API endpoints:
         /login
             /
             /cookie
-        /login2
+        /login_alt
+        /list/private_key/<ACCOUNT>
     
 ============================================================================================================================================================    
     
@@ -375,6 +376,18 @@ def api_users_list_email(user_email):
     if db_query.count() == 1:
         db_query_json = bson.json_util.dumps({ "users": list(db_query) }, indent = 2)
         response = set_ids_from_objectIds(db_query_json, "users")
+        return response, 200
+    else:
+        abort(404)
+ 
+
+# API -> List account with address <ACCOUNT> [WARNING_DEV_MODE: will return all account info private_key]
+@app.route('/api/v1/users/list/private_key/<account>', methods=['GET'])
+def api_users_list_private_key(account):
+    db_query = accountsCollection.find({ "account": account })
+    if db_query.count() == 1:
+        db_query_json = bson.json_util.dumps({ "accounts": list(db_query) }, indent = 2)
+        response = set_ids_from_objectIds(db_query_json, "accounts")
         return response, 200
     else:
         abort(404)

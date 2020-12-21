@@ -90,14 +90,14 @@ def run_unblock_and_delete_bid(bid_id):
     res = requests.get('http://10.4.41.142/api/v1/bids/unblock/' + bid_id)
     return res.text, res.status_code
     
-"""
+
 @app.route('/run/delete_bid/<bid_id>', methods=['POST'])
 def run_delete_bid(bid_id):  
     API_KEY = request.form.get("API_KEY", type = str)
     pload = { 'API_KEY': API_KEY }
     res = requests.post('http://10.4.41.142/api/v1/bids/delete/' + bid_id, data = pload)
     return res.text, res.status_code
-"""  
+
  
   
 @app.route('/run/signup', methods=['POST'])
@@ -167,7 +167,36 @@ def run_logout():
         
     return response
    
-    
+   
+@app.route('/run/get_address_from_email/<email>', methods=['GET'])
+def run_get_address_from_email(email):  
+    res = requests.get('http://10.4.41.142/api/v1/users/list/email/' + email)
+    if res.status_code == 200:
+        return json.loads(res.text)['users'][0]['account'], 200
+    else:
+        return res.text, res.status_code
+     
+     
+@app.route('/run/get_my_user_account', methods=['GET'])
+def run_get_my_user_account():  
+    if is_cookie_valid():
+        email = request.cookies.get("itoken_user_email")
+        if email is None:
+            abort(401)
+            
+        res = requests.get('http://10.4.41.142/api/v1/users/list/email/' + email)
+        if res.status_code == 200:
+            res_json = json.loads(res.text)['users'][0]
+            del res_json['password']
+            del res_json['api_key']
+            return res_json, 200
+        else:
+            return res.text, res.status_code
+            
+    else:
+        abort(401)
+     
+  
 #############################################################################################################################################################
 """ CHECK LOG IN COOKIE VALIDITY """
 #############################################################################################################################################################
@@ -264,6 +293,10 @@ def files_UpcToken():
 @app.route('/files/abis/CatToken.json', methods=['GET'])
 def files_CatToken():
     return send_from_directory("abis", "CatToken.json")
+    
+@app.route('/files/abis/Escrow.json', methods=['GET'])
+def files_Escrow():
+    return send_from_directory("abis", "Escrow.json")
     
 #############################################################################################################################################################
 """ TEST ROUTE """

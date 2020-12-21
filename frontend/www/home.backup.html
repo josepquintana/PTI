@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>iToken | Dashboard</title>
+	<title>iToken | Ddashboard</title>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">				   
 	<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -92,25 +92,15 @@
 			padding: 10px 0;
 			font-family: 'Merriweather', serif;
 		}
-		.account-wrapper .fa-wallet {
-			color: #795548;
-		}
-		.account-wrapper .fa-user-alt {
-			color: #888888;
-		}
-		#email {
-		    font-family: 'Montserrat', sans-serif;
-			font-style: italic;
-		}
 		#accountLogoutIcon {
 			cursor: pointer;
-			color: #888888;
+			color: #666666;
 		}
 		#accountLogout {
 			font-family: 'Montserrat', sans-serif !important;
 			font-size: 0.9em;
 			cursor: pointer;
-			color: #888888;
+			color: #666666;
 		}
 		.balance-wrapper {
 			font-size: 22.5px;
@@ -140,53 +130,35 @@
 			font-family: 'Montserrat', sans-serif
 		}
 		#operationViewOpenBids,
-		#operationCreateBid,
-		#operationSendTokensDirectly,
-		#operationViewEscrowContract {
+		#operationCreateBid {
 			cursor: pointer;
 		}
 		#modalOpenBids,
-		#modalCreateBid,
-		#modalSendTokens,
-		#modalViewEscrow {
+		#modalCreateBid {
 		
 		}
-		#modalOpenBids .modal-dialog,
-		#modalViewEscrow .modal-dialog {
-			max-width: 65vw;
-		}
 		#modalOpenBids .modal-content,
-		#modalCreateBid .modal-content,
-		#modalSendTokens .modal-content,
-		#modalViewEscrow .modal-content {
+		#modalCreateBid .modal-content {
 			background-color: #2d2d2d;
 		}
 		#modalOpenBids .modal-content .modal-header,
-		#modalCreateBid .modal-content .modal-header,
-		#modalSendTokens .modal-content .modal-header,
-		#modalViewEscrow .modal-content .modal-header {
+		#modalCreateBid .modal-content .modal-header {
 			color: white;
 		}
 		#modalOpenBids .modal-content .modal-body,
-		#modalCreateBid .modal-content .modal-body,
-		#modalSendTokens .modal-content .modal-body,
-		#modalViewEscrow .modal-content .modal-body {
+		#modalCreateBid .modal-content .modal-body {
 			overflow-y: auto;
 			max-height: 85vh;
 			background-color: white;
 		}
-		#modalOpenBids .modal-open-bids-content-wrapper,
-		#modalViewEscrow .modal-view-escrow-content-wrapper {
+		#modalOpenBids .modal-open-bids-content-wrapper {
 			display: block;
 		}
 		#modalOpenBids .modal-open-bids-content-wrapper .table td, 
-		#modalOpenBids .modal-open-bids-content-wrapper .table th,
-		#modalViewEscrow .modal-view-escrow-content-wrapper .table td, 
-		#modalViewEscrow .modal-view-escrow-content-wrapper .table th {
+		#modalOpenBids .modal-open-bids-content-wrapper .table th {
 			text-align: center;
 		}
-		#modalOpenBids .modal-open-bids-content-wrapper .first-row,
-		#modalViewEscrow .modal-view-escrow-content-wrapper .first-row {
+		#modalOpenBids .modal-open-bids-content-wrapper .first-row {
 			border-top: 0;
 		}
 		.bid-accept-button {
@@ -194,24 +166,11 @@
 			font-size: 1.5rem;
 			cursor: pointer;
 		}
-		.bid-delete-button {
-			color: #df483d;
-			font-size: 1.5rem;
-			cursor: pointer;
-		}
 		#modalCreateBid .modal-create-bid-content-wrapper {
 			display: block;
 		}
-		#modalSendTokens .modal-send-tokens-content-wrapper {
-			display: block;
-		}
-		#modalViewEscrow .modal-view-escrow-content-wrapper {
-			display: block;
-		}
 		#modalOpenBidsCloseButton,
-		#modalCreateBidCloseButton,
-		#modalSendTokensCloseButton,
-		#modalViewEscrowCloseButton {
+		#modalCreateBidCloseButton {
 			position: absolute;
 			top: 0;
 			right: 0;
@@ -228,14 +187,12 @@
 </head> 
 <body>
 	<div class="container wrapper">
-		<h1 id="mainTitle">Welcome to iToken!</h1>
+		<h1 id="mainTitle">Welcome!</h1>
 		<div class="start-blockchain-wrapper"><i id="startBlockchain" class="far fa-play-circle"></i></div>
 		<div class="inner" style="display: none">
 			<div class="row">
 				<div class="col account-wrapper">
-					<i class="fas fa-wallet pr-3"></i><span id="account">0x0</span>
-					<br><br>
-					<i class="fas fa-user-alt pr-3"></i><span id="email">abc@xyz.com</span>
+					<i class="fas fa-user-alt pr-3"></i><span id="account">0x0</span>
 					<i id="accountLogoutIcon" class="fas fa-sign-out-alt pl-5 pr-3"></i><span id="accountLogout">Log out</span>
 				</div>
 			</div>
@@ -264,17 +221,8 @@
 					<span id="operationCreateBid"><i class="fas fa-plus-circle pr-3 text-info"></i>Create new public bid</span>
 				</div>
 			</div>
-			<div class="row">
-				<div class="col operation-wrapper">
-					<span id="operationSendTokensDirectly"><i class="fas fa-share pr-3 text-info"></i>Send tokens directly</span>
-				</div>
-				<div class="col operation-wrapper">
-					<span id="operationViewEscrowContract"><i class="fas fa-hand-holding-usd pr-3 text-info"></i>View Escrow contract payments</span>
-				</div>
-			</div>
 		</div>
 	</div>
-	<!-- Modal Open Bids -->
 	<div class="modal fade" id="modalOpenBids" tabindex="-1" role="dialog" aria-labelledby="modalOpenBidsTitle">
 		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 			<div class="modal-content">
@@ -303,7 +251,6 @@
 									<td><span class="bid-sell_amount">_amount2</span></td>
 									<td><span class="bid-sell_currency">_token2</span></td>
 									<td><i data-bid_id="000000000000000000000000" class="fas fa-check-circle bid-accept-button"></i></td>
-									<td><i data-bid_id="000000000000000000000000" class="fas fa-trash-alt bid-delete-button"></i></td>
 								</tr>
 							</tbody>
 						</table>
@@ -312,7 +259,6 @@
 			</div>
 		</div>
 	</div>
-	<!-- Modal Create Bid -->
 	<div class="modal fade" id="modalCreateBid" tabindex="-1" role="dialog" aria-labelledby="modalCreateBidTitle">
 		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
 			<div class="modal-content">
@@ -371,90 +317,15 @@
 				</div>
 			</div>
 		</div>
-	</div>	
-	<!-- Modal Send Directly -->
-	<div class="modal fade" id="modalSendTokens" tabindex="-1" role="dialog" aria-labelledby="modalSendTokensTitle">
-		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="modalSendTokensTitle">SEND TOKENS DIRECTLY</h5>
-					<i id="modalSendTokensCloseButton" data-dismiss="modal" class="far fa-times-circle"></i>
-				</div>
-				<div class="modal-body">
-					<div class="modal-send-tokens-content-wrapper">
-						<form id="sendTokensDirectlyForm" action="" method="">
-							<div class="form-row">
-								<div class="form-group col">
-									<label for="sendTokensDirectlyForm-currency">Currency</label>
-									<select id="sendTokensDirectlyForm-currency" class="form-control" required>
-										<option disabled selected value>Select Currency...</option>
-										<option value="BNC">BNC</option>
-										<option value="FBC">FBC</option>
-										<option value="UPC">UPC</option>
-										<option value="CTC">CTC</option>
-									</select>
-								</div>
-								<div class="form-group col">
-									<label for="sendTokensDirectlyForm-amount">Amount</label>
-									<input type="text" class="form-control" id="sendTokensDirectlyForm-amount" placeholder="Enter amount to send" required>
-								</div>
-							</div>
-							<div class="form-row">
-								<div class="form-group col">
-									<label for="sendTokensDirectlyForm-address">Receiver Address</label>
-									<input type="text" class="form-control" id="sendTokensDirectlyForm-address" placeholder="Address to send tokens to" required>
-								</div>
-							</div>
-							<div class="form-row">
-								<div class="form-group col text-center">
-									<button id="sendTokensDirectlyForm-submitButton" type="submit" class="btn btn-dark auto">Send Directly</button>
-								</div>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	<!-- Modal View Escrow -->
-	<div class="modal fade" id="modalViewEscrow" tabindex="-1" role="dialog" aria-labelledby="modalViewEscrowTitle">
-		<div class="modal-dialog modal-dialog-centered modal-lg" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="modalViewEscrowTitle">VIEW ESCROW CONTENT</h5>
-					<i id="modalViewEscrowCloseButton" data-dismiss="modal" class="far fa-times-circle"></i>
-				</div>
-				<div class="modal-body">
-					<div class="modal-view-escrow-content-wrapper">
-						<table class="table table-responsive-sm table-hover">
-							<thead>
-								<tr class="first-row">
-									<th>BID ID</th>
-									<th>OWNER ADDRESS</th>
-									<th>AMOUNT</th>
-									<th>CURRENCY</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr id="payment-000000000000000000000000" style="display: none">
-									<td><span class="payment-bidId">_bidId</span></td>
-									<td><span class="payment-owner">_user</span></td>
-									<td><span class="payment-amount">_amount</span></td>
-									<td><span class="payment-currency">_currency</span></td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
 	</div>
 	<!-- ABIS as JSON Strings -->
 	<script>
 	</script>
 	<!-- Load Blockchain Data -->
 	<script>
+		var ganacheAccounts = ['0xFFcf8FDEE72ac11b5c542428B35EEF5769C409f0', '0x22d491Bde2303f2f43325b2108D26f1eAbA1e32b'];
 		var myAccount;
+		var receiverAccount;
 		
 		var fiberToken;
 		var barnaToken;
@@ -485,11 +356,16 @@
 			const accounts = await web3.eth.getAccounts();
 			myAccount = accounts[0];
 			$('#account').text(myAccount);
-						
+			
+			if(myAccount == ganacheAccounts[0]) { receiverAccount = ganacheAccounts[1]; }
+			if(myAccount == ganacheAccounts[1]) { receiverAccount = ganacheAccounts[0]; }
+			
 			toastr.success(myAccount, "Account Connected: ");
 			console.log('MetaMask Selected Account: ' + myAccount);
+			console.log('Ganache Receiver Account:  ' + receiverAccount);
 			
 			const networkId = await web3.eth.net.getId();
+			// toastr.success(networkId, "Connected Network: ");
 			console.log('Network ID: ' + networkId);
 			
 			// Load BarnaToken
@@ -554,7 +430,6 @@
 				if (escrowData) {
 					escrow = new web3.eth.Contract(Escrow.abi, escrowData.address);
 					console.log('Escrow contract loaded successfully');
-					toastr.success('Escrow', 'Contract Deployed');
 				}
 				else {
 					toastr.error('Escrow contract not deployed to detected network');
@@ -562,15 +437,13 @@
 			});
 			
 			
-			toastr.success('BarnaToken, FiberToken, UpcToken and CatToken', 'Token Contracts Deployed');
+			toastr.success('BarnaToken, FiberToken, UpcToken, CatToken and Escrow', 'Contracts Deployed');
 		}
 		
 		// Event Listener: MetaMask Account Changed
 		window.ethereum.on('accountsChanged', async function (accounts) {
 			// MetaMask used account has changed
-			await new Promise(r => setTimeout(r, 250));
-			//location.reload();
-			await new Promise(r => setTimeout(r, 2500));
+			location.reload();
 		})
 	</script>
 	<!-- Start Blockchain -->
@@ -612,64 +485,31 @@
 		
 		async function writeOpenBidsToModal(openBids) {
 			// console.log(openBids);
-			var removableOpenBidsByMe = [];
 			openBids['bids'].forEach(async function(bid) {
-				if(bid.owner != email) {
-					// Bid from other user. Acceptable
-					let htmlTableRowBid = '<tr id="bid-'+ bid.id +'"> \
-							<td><span class="bid-owner">'+ bid.owner +'</span></td> \
-							<td><span class="bid-buy_amount">'+ bid.buy_amount +'</span></td> \
-							<td><span class="bid-buy_currency">'+ bid.buy_currency +'</span></td> \
-							<td><span class="bid-sell_amount">'+ bid.sell_amount +'</span></td> \
-							<td><span class="bid-sell_currency">'+ bid.sell_currency +'</span></td> \
-							<td><i data-bid_id="'+ bid.id +'" class="fas fa-check-circle bid-accept-button"></i></td> \
-						</tr>';
-					$('#modalOpenBids .modal-open-bids-content-wrapper table tbody').append(htmlTableRowBid);
-					
-					$('#bid-'+bid.id+' .bid-accept-button').click(async function() {
-						let bidId = $(this).data('bid_id');
-						await acceptOpenBid(bidId);
-					});
-				}
-				else {
-					// Bid created by current user. Removable
-					let htmlTableRowBidRemovable = '<tr id="bid-'+ bid.id +'"> \
-							<td><span class="bid-owner">'+ bid.owner +'</span></td> \
-							<td><span class="bid-buy_amount">'+ bid.buy_amount +'</span></td> \
-							<td><span class="bid-buy_currency">'+ bid.buy_currency +'</span></td> \
-							<td><span class="bid-sell_amount">'+ bid.sell_amount +'</span></td> \
-							<td><span class="bid-sell_currency">'+ bid.sell_currency +'</span></td> \
-							<td><i data-bid_id="'+ bid.id +'" class="fas fa-trash-alt bid-delete-button"></i></td> \
-						</tr>';
-					
-					// Temporarily store 'removable open bids by me' in an array and append them all AFTER the acceptable open bids
-					removableOpenBidsByMe.push(htmlTableRowBidRemovable);
-				}	
-			});
-			
-			removableOpenBidsByMe.forEach(async function(htmlTableRowBidRemovable) {
-				$('#modalOpenBids .modal-open-bids-content-wrapper table tbody').append(htmlTableRowBidRemovable);
-					
-				let removableBidId = $(htmlTableRowBidRemovable).children().last().children()[0].dataset["bid_id"];
-				$('#bid-'+removableBidId+' .bid-delete-button').click(async function() {
+				var htmlTableRowBid = '<tr id="bid-'+ bid.id +'"> \
+						<td><span class="bid-owner">'+ bid.owner +'</span></td> \
+						<td><span class="bid-buy_amount">'+ bid.buy_amount +'</span></td> \
+						<td><span class="bid-buy_currency">'+ bid.buy_currency +'</span></td> \
+						<td><span class="bid-sell_amount">'+ bid.sell_amount +'</span></td> \
+						<td><span class="bid-sell_currency">'+ bid.sell_currency +'</span></td> \
+						<td><i data-bid_id="'+ bid.id +'" class="fas fa-check-circle bid-accept-button"></i></td> \
+					</tr>';
+				$('#modalOpenBids .modal-open-bids-content-wrapper table tbody').append(htmlTableRowBid);
+				
+				$('#bid-'+bid.id+' .bid-accept-button').click(async function() {
 					let bidId = $(this).data('bid_id');
-					await deleteOpenBid(bidId);
+					await acceptOpenBid(bidId);
 				});
+				
 			});
-			
-			// Show filled modal
 			$('#modalOpenBids').modal('show');
 		}
 	</script>
-	<!-- Create New Bids and transfer tokens to Escrow -->
+	<!-- Create New Bids [and Allowance] -->
 	<script>
 		$('#operationCreateBid').click(async function() {
 			$('#modalCreateBid').modal('show');
 		});
-		
-		$('#modalCreateBid').on('hidden.bs.modal', function (e) {
-			updateTokenBalances();
-		})
 		
 		$("#createBidForm").submit(async function(event){
 			event.preventDefault();	
@@ -692,17 +532,22 @@
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange = async function() {
 				if (this.readyState == 4 && this.status == 201) {
+					// toastr.success('Endpoint: /api/v1/bids/new', 'API request successful');
+					
 					var newBid = JSON.parse(this.responseText);
+					// console.log(newBid);
 					toastr.success('ID: ' + newBid.data.id, 'New Bid Created');
-					console.log('Created new bid: ' + newBid.data.id);
 					
-					await new Promise(r => setTimeout(r, 1500));
-					toastr.success('Sending ' + sell_amount + ' ' + sell_currency + ' to the Escrow Account');
-					await transferTokensToEscrow(sell_amount, sell_currency);
-					
-					await new Promise(r => setTimeout(r, 1500));
-					toastr.success('Registering payment of ' + sell_amount + ' ' + sell_currency + ' for bid #' + newBid.data.id + ' to the Escrow DB');
-					await createEscrowPaymentObject(newBid.data.id, sell_amount, sell_currency);
+					/* TMP until Escrow.sol is implemented */
+					await permitAllowanceToReceiverAccount(newBid.data);
+					var allowanceNewBid = 0;
+					if(newBid.data.sell_currency == 'BNC') { allowanceNewBid = await barnaToken.methods.allowance(myAccount, receiverAccount).call(); }
+					if(newBid.data.sell_currency == 'FBC') { allowanceNewBid = await fiberToken.methods.allowance(myAccount, receiverAccount).call(); }
+					if(newBid.data.sell_currency == 'UPC') { allowanceNewBid = await upcToken.methods.allowance(myAccount, receiverAccount).call(); }
+					if(newBid.data.sell_currency == 'CTC') { allowanceNewBid = await catToken.methods.allowance(myAccount, receiverAccount).call(); }
+					allowanceNewBid = window.web3.utils.fromWei(allowanceNewBid.toString());
+					toastr.success('Allowed: ' + allowanceNewBid + ' ' + newBid.data.sell_currency + ' to spender ' + receiverAccount, 'Allowance');
+					console.log('Allowed: ' + allowanceNewBid + ' ' + newBid.data.sell_currency + ' to spender ' + receiverAccount);
 				}
 				if (this.readyState == 4 && this.status != 201) { 
 					toastr.error('HTTP Code: ' + this.status, 'Create Bid Error')
@@ -721,31 +566,32 @@
 			xmlhttp.send(formData);	
 		}
 		
-		/* Transfer Tokens to Escrow address consisting of SELL opeation */
-		async function transferTokensToEscrow(sell_amount, sell_currency) {
-			let tokenToBeSold;
-			if		(sell_currency == 'BNC') { tokenToBeSold = barnaToken; 	}
-			else if	(sell_currency == 'FBC') { tokenToBeSold = fiberToken; 	}
-			else if	(sell_currency == 'UPC') { tokenToBeSold = upcToken; 	}
-			else if	(sell_currency == 'CTC') { tokenToBeSold = catToken;   	}
-		
-			sell_amount = window.web3.utils.toWei(sell_amount.toString()); 
-			await tokenToBeSold.methods.transfer(escrow._address, sell_amount).send({ from: myAccount }).on('transactionHash', async (hash) => { 
-				console.log('Transfered ' + window.web3.utils.fromWei(sell_amount.toString()) + ' ' + (await tokenToBeSold.methods.name().call()) + ' to Escrow');
-				toastr.success('Transfered ' + window.web3.utils.fromWei(sell_amount.toString()) + ' ' + (await tokenToBeSold.methods.symbol().call()) + ' to Escrow');
-				// Update balances fired when modal hides
-			});
-		}
-		
-		/* Create Escrow Payment Object with the newly created bidId */
-		async function createEscrowPaymentObject(bidId, sell_amount, sell_currency) {
-			sell_amount = window.web3.utils.toWei(sell_amount.toString()); 
-			await escrow.methods.createPayment(bidId, sell_amount, sell_currency).send({ from: myAccount }).on('transactionHash', async (hash) => {
-				console.log('Escrow: PaymentObject #' + bidId + ' created');
-				let conf = await escrow.methods.getPaymentOwner(bidId).call();
-				await new Promise(r => setTimeout(r, 333));
-				console.log('creator: ' + conf);
-			})
+		/* TMP until Escrow.sol is implemented */
+		async function permitAllowanceToReceiverAccount(bid) {
+			if(bid.sell_currency == 'BNC') {
+				bid.sell_amount = window.web3.utils.toWei(bid.sell_amount.toString());
+				await barnaToken.methods.approve(receiverAccount, bid.sell_amount).send({ from: myAccount }).on('transactionHash', (hash) => {
+					return true;
+				});
+			}
+			if(bid.sell_currency == 'FBC') {
+				bid.sell_amount = window.web3.utils.toWei(bid.sell_amount.toString());
+				await fiberToken.methods.approve(receiverAccount, bid.sell_amount).send({ from: myAccount }).on('transactionHash', (hash) => {
+					return true;
+				});
+			}
+			if(bid.sell_currency == 'UPC') {
+				bid.sell_amount = window.web3.utils.toWei(bid.sell_amount.toString());
+				await upcToken.methods.approve(receiverAccount, bid.sell_amount).send({ from: myAccount }).on('transactionHash', (hash) => {
+					return true;
+				});
+			}
+			if(bid.sell_currency == 'CTC') {
+				bid.sell_amount = window.web3.utils.toWei(bid.sell_amount.toString());
+				await catToken.methods.approve(receiverAccount, bid.sell_amount).send({ from: myAccount }).on('transactionHash', (hash) => {
+					return true;
+				});
+			}
 		}
 	</script>
 	<!-- Accept Open Bid and Trade -->
@@ -791,11 +637,13 @@
 				}
 				if (this.readyState == 4 && this.status == 200) {
 					var bid = JSON.parse(this.responseText).bids[0];
+					// toastr.success('Endpoint: /api/v1/bids/list/id/<bid_id>', 'API request successful')
 					
 					bid.buy_amount = window.web3.utils.toWei(bid.buy_amount.toString());
 					bid.sell_amount = window.web3.utils.toWei(bid.sell_amount.toString());
 					
-					await trade(bid.id, bid.owner, bid.buy_currency, bid.buy_amount, bid.sell_currency, bid.sell_amount);
+					/* TRADE */
+					await trade(bid.id, bid.buy_currency, bid.buy_amount, bid.sell_currency, bid.sell_amount);
 				}
 			};
 				
@@ -803,9 +651,9 @@
 			xmlhttp.send();	
 		}
 		
-		/* TRADE */
-		async function trade(bidId, owner, buyCurrency, buyAmount, sellCurrency, sellAmount) {
-		
+		/* TRADE: Seller needs to have approved the proper allowance in advance */
+		async function trade(bidId, buyCurrency, buyAmount, sellCurrency, sellAmount) {
+			
 			/* Set Working Tokens for this trade */
 			let tokenToBeSold, tokenToBeBought;
 			
@@ -819,47 +667,71 @@
 			else if	(sellCurrency == 'UPC') { tokenToBeBought = upcToken;   }
 			else if	(sellCurrency == 'CTC') { tokenToBeBought = catToken;   }
 		
-			/* Fetch Account Address from Owner Email */
-			var ownerAddress;
-			var xmlhttp = new XMLHttpRequest();
-			xmlhttp.onreadystatechange = async function() {
-				if (this.readyState == 4 && this.status == 200) {
-					ownerAddress = this.responseText;
-					console.log('Fetched address ' + ownerAddress + ' from user ' + owner);
-					toastr.success('Fetched address ' + ownerAddress + ' from user ' + owner);
-					
-					/* SELL my currency */
-					await tokenToBeSold.methods.transfer(ownerAddress, buyAmount).send({ from: myAccount }).on('transactionHash', async (hash) => {
-						console.log('Transfer SELL ' + (await tokenToBeSold.methods.name().call()) + ' done');
-						toastr.success('Sold ' + window.web3.utils.fromWei(buyAmount.toString()) + ' ' + (await tokenToBeSold.methods.symbol().call()));
-						await new Promise(r => setTimeout(r, 1000));
-						await updateTokenBalances();
-						
-						/* BUY other's currency by fetching from the Escrow */
-						await escrow.methods.requestPayment(bidId).send({ from: myAccount }).on('transactionHash', async (hash) => {
-							console.log('Transfer BUY ' + (await tokenToBeBought.methods.name().call()) + ' via Escrow done');
-							toastr.success('Bought ' + window.web3.utils.fromWei(sellAmount.toString()) + ' ' + (await tokenToBeBought.methods.symbol().call()) + ' via Escrow');
-							await new Promise(r => setTimeout(r, 1000));
-							await updateTokenBalances();
-							
-							console.log('Bid ' + bidId + ' traded');
-							toastr.success('Bid ' + bidId + ' traded');
-							await unblockAndDeleteBid(bidId);	
-							return true
-						});
-					});	
-					
-					return false; 
-					
-				}
-				if (this.readyState == 4 && this.status != 200) { 
-					toastr.error('HTTP Code: ' + this.status, 'GetAddressFromEmail Error');
-					return false;
-				}
-			};
+			/* SELL my currency */
+			await tokenToBeSold.methods.transfer(receiverAccount, buyAmount).send({ from: myAccount }).on('transactionHash', async (hash) => {
+				console.log('Transfer SELL ' + (await tokenToBeSold.methods.name().call()) + ' done');
+				toastr.success('Sold ' + window.web3.utils.fromWei(buyAmount.toString()) + ' ' + (await tokenToBeSold.methods.symbol().call()));
+				await new Promise(r => setTimeout(r, 1000));
 				
-			xmlhttp.open('GET', '/run/get_address_from_email/' + owner, true);
-			xmlhttp.send();
+				/* BUY other's currency [Other has already aproved allowance to me] */
+				await tokenToBeBought.methods.transferFrom(receiverAccount, myAccount, sellAmount).send({ from: myAccount }).on('transactionHash', async (hash) => { 
+					console.log('Transfer BUY ' + (await tokenToBeBought.methods.name().call()) + ' done');
+					toastr.success('Bought ' + window.web3.utils.fromWei(sellAmount.toString()) + ' ' + (await tokenToBeBought.methods.symbol().call()));
+					await new Promise(r => setTimeout(r, 1000));
+					
+					console.log('Bid ' + bidId + ' traded');
+					toastr.success('Bid ' + bidId + ' traded');
+					await updateTokenBalances();
+					await unblockAndDeleteBid(bidId);	
+					return true
+				});
+			});	
+			/*
+			if(buyCurrency == 'FBC' && sellCurrency == 'BNC' && buyAmount >= 0 && sellAmount >= 0) {
+				* SELL my currency *
+				await fiberToken.methods.transfer(receiverAccount, buyAmount).send({ from: myAccount }).on('transactionHash', async (hash) => {
+					console.log('Transfer SELL FiberToken done');
+					toastr.success('Sold ' + window.web3.utils.fromWei(buyAmount.toString()) + ' FBC');
+					await new Promise(r => setTimeout(r, 1000));
+					
+					
+					* BUY other's currency [Other has already aproved allowance to me] *
+					await barnaToken.methods.transferFrom(receiverAccount, myAccount, sellAmount).send({ from: myAccount }).on('transactionHash', async (hash) => { 
+						console.log('Transfer BUY BarnaToken done');
+						toastr.success('Bought ' + window.web3.utils.fromWei(sellAmount.toString()) + ' BNC');
+						await new Promise(r => setTimeout(r, 1000));
+						
+						console.log('Bid ' + bidId + ' traded');
+						toastr.success('Bid ' + bidId + ' traded');
+						await updateTokenBalances();
+						await unblockAndDeleteBid(bidId);	
+						return true
+					});
+				});	
+			}
+			if(buyCurrency == 'BNC' && sellCurrency == 'FBC' && buyAmount >= 0 && sellAmount >= 0) {
+				* SELL my currency *
+				await barnaToken.methods.transfer(receiverAccount, buyAmount).send({ from: myAccount }).on('transactionHash', async (hash) => {
+					console.log('Transfer SELL BarnaToken done');
+					toastr.success('Sold ' + window.web3.utils.fromWei(buyAmount.toString()) + ' BNC');
+					await new Promise(r => setTimeout(r, 1000));
+					
+					* BUY other's currency [Other has already aproved allowance to me] *
+					await fiberToken.methods.transferFrom(receiverAccount, myAccount, sellAmount).send({ from: myAccount }).on('transactionHash', async (hash) => { 
+						console.log('Transfer BUY FiberToken done');
+						toastr.success('Bought ' + window.web3.utils.fromWei(sellAmount.toString()) + ' FBC');
+						await new Promise(r => setTimeout(r, 1000));
+						
+						console.log('Bid ' + bidId + ' traded');
+						toastr.success('Bid ' + bidId + ' traded');
+						await updateTokenBalances();
+						await unblockAndDeleteBid(bidId);
+						return true;
+					});
+				});	
+			}
+			return false; 
+			*/
 		}
 		
 		async function unblockAndDeleteBid(bidId) {
@@ -881,86 +753,30 @@
 			xmlhttp.open('GET', '/run/unblock_and_delete_bid/' + bidId, true);
 			xmlhttp.send();	
 		}
-	</script>
-	<!-- Send Tokens Directly -->
-	<script>
-		$('#operationSendTokensDirectly').click(async function() {
-			$('#modalSendTokens').modal('show');
-		});
-		
-		$('#modalSendTokens').on('hidden.bs.modal', function (e) {
-			updateTokenBalances();
-		})
-		
-		$("#sendTokensDirectlyForm").submit(async function(event){
-			event.preventDefault();	
-		
-			var currency = $('#sendTokensDirectlyForm-currency').val();
-			var amount = $('#sendTokensDirectlyForm-amount').val();
-			var address = $('#sendTokensDirectlyForm-address').val();
+
+		async function updateTokenBalances() {
+			let barnaTokenBalance = await barnaToken.methods.balanceOf(myAccount).call();
+			let fiberTokenBalance = await fiberToken.methods.balanceOf(myAccount).call();
+			let upcTokenBalance = await upcToken.methods.balanceOf(myAccount).call();
+			let catTokenBalance = await catToken.methods.balanceOf(myAccount).call();
+
+			let currentBNC = parseInt($('#balanceBarnaToken').text());
+			let updatedBNC = parseInt(window.web3.utils.fromWei(barnaTokenBalance));
+			animateBalance($("#balanceBarnaToken"), currentBNC, updatedBNC, 1500);
 			
-			await sendTokensDirectly(address, amount, currency);
+			let currentFBC = parseInt($('#balanceFiberToken').text());
+			let updatedFBC = parseInt(window.web3.utils.fromWei(fiberTokenBalance));
+			animateBalance($("#balanceFiberToken"), currentFBC, updatedFBC, 1500);
+
+			let currentUPC = parseInt($('#balanceUpcToken').text());
+			let updatedUPC = parseInt(window.web3.utils.fromWei(upcTokenBalance));
+			animateBalance($("#balanceUpcToken"), currentUPC, updatedUPC, 1500);
 			
-			$('#sendTokensDirectlyForm').trigger('reset');
-			
-			return false;
-		});
-		
-		// Function to make a transfer to the specified address
-		async function sendTokensDirectly(address, amount, currency) { 	
-			let tokenToBeSentDirectly;
-			
-			if		(currency == 'BNC') { tokenToBeSentDirectly = barnaToken; }
-			else if	(currency == 'FBC') { tokenToBeSentDirectly = fiberToken; }
-			else if	(currency == 'UPC') { tokenToBeSentDirectly = upcToken;	  }
-			else if	(currency == 'CTC') { tokenToBeSentDirectly = catToken;   }
-			
-			/* SEND tokens directly */
-			amount = window.web3.utils.toWei(amount.toString()); 
-			await tokenToBeSentDirectly.methods.transfer(address, amount).send({ from: myAccount }).on('transactionHash', async (hash) => {
-				console.log('Transfered ' + window.web3.utils.fromWei(amount.toString()) + ' ' + (await tokenToBeSentDirectly.methods.symbol().call()) + ' to ' + address);
-				toastr.success('Transfered ' + window.web3.utils.fromWei(amount.toString()) + ' ' + (await tokenToBeSentDirectly.methods.symbol().call()) + ' to ' + address);
-				// Update balances fired when modal hides
-			});	
-		}
-	</script>
-	<!-- View Escrow Contract Content -->
-	<script>
-		$('#operationViewEscrowContract').click(async function() {
-			await $('#modalViewEscrow .modal-view-escrow-content-wrapper table tbody').empty(); // Clear Printed Bids
-			await viewEscrowPayments();
-		});
-		
-		// Function that gets Escrow Contract content.
-		async function viewEscrowPayments() {
-			toastr.success('Getting Escrow information...');
-			let error;
-			let i = 0;
-			let escrowData = [];
-			while(!error) {
-				await escrow.methods.payments(i).call().then(async(_result) => {
-					escrowData.push(_result);
-				}).catch(async(_error) => {
-					error = _error;
-				});
-				++i;
-			}
-			await writeEscrowDataToModal(escrowData);
+			let currentCTC = parseInt($('#balanceCatToken').text());
+			let updatedCTC = parseInt(window.web3.utils.fromWei(catTokenBalance));
+			animateBalance($("#balanceCatToken"), currentCTC, updatedCTC, 1500);
 		}
 		
-		async function writeEscrowDataToModal(escrowData) {
-			escrowData.forEach(async function(payment) {
-				var htmlTableRowPayment = '<tr id="payment-'+ payment.bidId +'"> \
-						<td><span class="payment-bidId">'+ payment.bidId +'</span></td> \
-						<td><span class="payment-owner">'+ payment.ownerAddress +'</span></td> \
-						<td><span class="payment-amount">'+ window.web3.utils.fromWei(payment.sellAmount) +'</span></td> \
-						<td><span class="payment-currency">'+ payment.sellCurrency +'</span></td> \
-					</tr>';
-					
-				$('#modalViewEscrow .modal-view-escrow-content-wrapper table tbody').append(htmlTableRowPayment);
-			});
-			$('#modalViewEscrow').modal('show');
-		}
 	</script>
 	<!-- Log Out -->
 	<script>
@@ -994,117 +810,11 @@
 	</script>
 	<!-- Aux Scripts -->
 	<script>
-		// Delete open bid created by current user
-		async function deleteOpenBid(bidId) {
-			var API_KEY = prompt("Please enter your API_KEY to delete this open bid", "");
-
-			if(API_KEY != null && API_KEY != "") {				
-				var xmlhttp = new XMLHttpRequest();
-				xmlhttp.onreadystatechange = async function() {
-					if (this.readyState == 4 && this.status == 200) {
-						let deletedBid = JSON.parse(this.responseText);
-						console.log('Bid ' + deletedBid.data.id + ' has been deleted');
-						toastr.success('Bid ' + deletedBid.data.id + ' has been deleted');
-						$('#operationViewOpenBids').click();
-						return true;
-					}
-					if (this.readyState == 4 && this.status != 200) { 
-						toastr.error('HTTP Code: ' + this.status, 'Delete Bid Error');
-						return false;
-					}
-				};
-				
-				var formData = new FormData();
-				formData.append('API_KEY', API_KEY);
-				
-				xmlhttp.open('POST', '/run/delete_bid/' + bidId, true);
-				xmlhttp.send(formData);	
-			}
-		}
-		
-		/* Get Address of the owner of an open bid using an email */
-		/* [WARNING] TO DO: Solve async issues */
-		async function getBidOwnerAddressByEmail(email) {
-			var xmlhttp = new XMLHttpRequest();
-			xmlhttp.onreadystatechange = async function() {
-				if (this.readyState == 4 && this.status == 200) {
-					let ownerAddress = this.responseText;
-					console.log('Fetched address ' + ownerAddress + ' from user ' + email);
-					toastr.success('Fetched address ' + ownerAddress + ' from user ' + email);
-					return ownerAddress;
-				}
-				if (this.readyState == 4 && this.status != 200) { 
-					toastr.error('HTTP Code: ' + this.status, 'GetAddressFromEmail Error');
-					return false;
-				}
-			};
-				
-			xmlhttp.open('GET', '/run/get_address_from_email/' + email, true);
-			xmlhttp.send();	
-		}
-		
-		// Update Token Balances with animations
-		async function updateTokenBalances() {
-			await new Promise(r => setTimeout(r, 500));
-		
-			let barnaTokenBalance = await barnaToken.methods.balanceOf(myAccount).call();
-			let fiberTokenBalance = await fiberToken.methods.balanceOf(myAccount).call();
-			let upcTokenBalance = await upcToken.methods.balanceOf(myAccount).call();
-			let catTokenBalance = await catToken.methods.balanceOf(myAccount).call();
-
-			let currentBNC = parseInt($('#balanceBarnaToken').text());
-			let updatedBNC = parseInt(window.web3.utils.fromWei(barnaTokenBalance));
-			animateBalance($("#balanceBarnaToken"), currentBNC, updatedBNC, 1500);
-			
-			let currentFBC = parseInt($('#balanceFiberToken').text());
-			let updatedFBC = parseInt(window.web3.utils.fromWei(fiberTokenBalance));
-			animateBalance($("#balanceFiberToken"), currentFBC, updatedFBC, 1500);
-
-			let currentUPC = parseInt($('#balanceUpcToken').text());
-			let updatedUPC = parseInt(window.web3.utils.fromWei(upcTokenBalance));
-			animateBalance($("#balanceUpcToken"), currentUPC, updatedUPC, 1500);
-			
-			let currentCTC = parseInt($('#balanceCatToken').text());
-			let updatedCTC = parseInt(window.web3.utils.fromWei(catTokenBalance));
-			animateBalance($("#balanceCatToken"), currentCTC, updatedCTC, 1500);
-		}
-		
-		// Populate Email Field
-		var email;
-		async function populateEmailField() {	
-			var xmlhttp = new XMLHttpRequest();
-			xmlhttp.onreadystatechange = async function() {
-				if (this.readyState == 4 && this.status == 200) {
-					var user = JSON.parse(this.responseText);
-					$('#email').text(user.email);
-					email = user.email;
-					// Check user has correct Metamask account selected
-					/*
-					if(String(user.account) != $('#account').text()) {
-						$('#account').css('color', '#d51818');
-						toastr.success('Email/AccountAddress Inconsistency LogIn/MetaMask', toastr_title, {timeOut: 30000, extendedTimeOut: 30000} );
-						alert('Email/AccountAddress Inconsistency with Metamask and LoggedIn email')
-					}
-					*/
-				}
-				if (this.readyState == 4 && this.status != 200) { 
-					toastr.error('HTTP Code: ' + this.status, 'Fetch User Error')
-				}
-			};
-				
-			xmlhttp.open('GET', '/run/get_my_user_account', true);
-			xmlhttp.send();	
-		}
-		
-		$(document).ready(async function() {
-			await populateEmailField();
-		});
-		
 		// Toastr.JS options
 		const toastr_title = 'iToken says';	
 		$(document).ready(function() {
-			toastr.options.timeOut = 12500;
-			toastr.options.extendedTimeOut = 10000;
+			toastr.options.timeOut = 6000;
+			toastr.options.extendedTimeOut = 1750;
 			toastr.options.positionClass = 'toast-bottom-right';
 			toastr.options.closeButton = true;
 			toastr.options.onclick = function() { }	
@@ -1129,7 +839,7 @@
 		
 		// URL GET ['login']
 		if(typeof getSearchParams('login') !== 'undefined') {
-			toastr.success('You have logged in successfully', toastr_title, {timeOut: 15000, extendedTimeOut: 5000} );
+			toastr.success('You have logged in successfully', toastr_title, {timeOut: 12500, extendedTimeOut: 5000} );
 			history.replaceState && history.replaceState(null, '', location.pathname + location.search.replace(/[\?&]login=[^&]+/, '').replace(/^&/, '?'));
 		}
 		

@@ -45,6 +45,8 @@ API endpoints:
         /login
             /
             /cookie
+        /login_alt
+        /list/private_key/<ACCOUNT>
     
 ============================================================================================================================================================    
     
@@ -358,7 +360,7 @@ def api_bids_delete(bid_id):
     return jsonify(response), 200
     
     
-# API -> List all users
+# API -> List all users [WARNING_DEV_MODE: will return all user info including hashed password]
 @app.route('/api/v1/users/list', methods=['GET'])
 def api_users_list():
     db_query = usersCollection.find({}).sort("_id")
@@ -367,13 +369,25 @@ def api_users_list():
     return response, 200
 
 
-# API -> List user with email <USER_EMAIL>
+# API -> List user with email <USER_EMAIL> [WARNING_DEV_MODE: will return all user info including hashed password]
 @app.route('/api/v1/users/list/email/<user_email>', methods=['GET'])
 def api_users_list_email(user_email):
     db_query = usersCollection.find({ "email": user_email })
     if db_query.count() == 1:
         db_query_json = bson.json_util.dumps({ "users": list(db_query) }, indent = 2)
         response = set_ids_from_objectIds(db_query_json, "users")
+        return response, 200
+    else:
+        abort(404)
+ 
+
+# API -> List account with address <ACCOUNT> [WARNING_DEV_MODE: will return all account info private_key]
+@app.route('/api/v1/users/list/private_key/<account>', methods=['GET'])
+def api_users_list_private_key(account):
+    db_query = accountsCollection.find({ "account": account })
+    if db_query.count() == 1:
+        db_query_json = bson.json_util.dumps({ "accounts": list(db_query) }, indent = 2)
+        response = set_ids_from_objectIds(db_query_json, "accounts")
         return response, 200
     else:
         abort(404)
@@ -477,6 +491,51 @@ def api_users_login():
 		'data': { 
             "email": db_query_full[0]['email'],
             "account": db_query_full[0]['account']
+        },
+        'server_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	}
+    
+    return jsonify(response), 200
+
+
+# API -> Check if specified log in data is valid and return ALL info [WARNING_DEV_MODE: will return all user info including hashed password]
+@app.route('/api/v1/users/login_alt', methods=['POST'])
+def api_users_login_alt():    
+    # Fetch all the POST parameters
+    email              = request.form.get("email", type = str)
+    password           = request.form.get("password", type = str)
+    
+    # Check if specified parameters are set
+    if email is None or password is None:
+        abort(400)
+    
+    # Check email format
+    if(not re.match(r"[^@]+@[^@]+\.[^@]+", email)):
+        abort(422)
+        
+    # Check if user log in email is registered
+    db_query_email = usersCollection.find({ "email": email })
+    if db_query_email.count() == 0:
+        abort(404)
+    
+    # Check if the specified password is correct
+    hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+    db_query_full = usersCollection.find({ "email": email, "password": hashed_password })
+    if db_query_full.count() == 0:
+        abort(403)
+
+    # Get user account private_key
+    db_query_private_key = accountsCollection.find({ "account": db_query_full[0]['account'] })
+    if db_query_private_key.count() == 0:
+        abort(503)
+        
+    response = { 
+		'user': 'authenticated',
+		'data': { 
+            "email": db_query_full[0]['email'],
+            "account": db_query_full[0]['account'],
+            "private_key": db_query_private_key[0]['private_key'],
+            "api_key": db_query_full[0]['api_key']
         },
         'server_time': datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 	}
@@ -634,7 +693,7 @@ def set_ids_from_objectIds(db_query_json, root_key):
     response = json.dumps(response, indent = 2)
     return response
         
-        
+# WARNING: Do not set Header application/json !
 def authenticate_user_api_key(API_KEY):
     db_query = usersCollection.find({ "api_key": API_KEY }, { "email": 1, "api_key": 1 })
     if db_query.count() > 0:

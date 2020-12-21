@@ -17,6 +17,7 @@ COPY ./frontend/abis/BarnaToken.json abis/
 COPY ./frontend/abis/FiberToken.json abis/
 COPY ./frontend/abis/UpcToken.json abis/
 COPY ./frontend/abis/CatToken.json abis/
+COPY ./frontend/abis/Escrow.json abis/
 
 # Get the necessary files
 COPY ./frontend/server_app.py .

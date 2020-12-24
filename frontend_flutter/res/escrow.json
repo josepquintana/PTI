@@ -1,0 +1,273 @@
+[
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "currency1",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "currency3",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [
+      {
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "name": "payments",
+    "outputs": [
+      {
+        "name": "customer",
+        "type": "address"
+      },
+      {
+        "name": "value",
+        "type": "uint256"
+      },
+      {
+        "name": "status",
+        "type": "uint8"
+      },
+      {
+        "name": "refundApproved",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "currency2",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
+    "name": "currency4",
+    "outputs": [
+      {
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "orderId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "name": "customer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "PaymentCreation",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "blc",
+        "type": "uint256"
+      }
+    ],
+    "name": "balance",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "name": "adresa",
+        "type": "address"
+      }
+    ],
+    "name": "add",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "name": "orderId",
+        "type": "uint256"
+      },
+      {
+        "indexed": true,
+        "name": "customer",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "name": "value",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "name": "status",
+        "type": "uint8"
+      },
+      {
+        "indexed": true,
+        "name": "reciver",
+        "type": "address"
+      }
+    ],
+    "name": "PaymentCompletion",
+    "type": "event"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "moneda",
+        "type": "string"
+      },
+      {
+        "name": "a",
+        "type": "address"
+      },
+      {
+        "name": "b",
+        "type": "address"
+      },
+      {
+        "name": "c",
+        "type": "address"
+      },
+      {
+        "name": "d",
+        "type": "address"
+      }
+    ],
+    "name": "Escroww",
+    "outputs": [
+      {
+        "name": "ad",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_orderId",
+        "type": "uint256"
+      },
+      {
+        "name": "customer",
+        "type": "address"
+      },
+      {
+        "name": "_value",
+        "type": "uint256"
+      }
+    ],
+    "name": "createPayment",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_orderId",
+        "type": "uint256"
+      },
+      {
+        "name": "moneda",
+        "type": "string"
+      }
+    ],
+    "name": "release",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "name": "_orderId",
+        "type": "uint256"
+      },
+      {
+        "name": "receiver",
+        "type": "address"
+      },
+      {
+        "name": "_status",
+        "type": "uint8"
+      },
+      {
+        "name": "coin",
+        "type": "string"
+      }
+    ],
+    "name": "completePayment",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

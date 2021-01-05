@@ -18,8 +18,6 @@
  *		- Lumia 920
  *		- Microsoft Surface
  *		- Galaxy S3
- *
- *  Added by ben182 (@beno182):
  *		- iPhone 6
  *  	- iPhone 6 Plus
  *		- iPhone SE
@@ -27,6 +25,7 @@
  *		- iPad Air 2
  *		- iPad Pro
  *		- Macbook 2015
+ *		- Iphone X
  *
  *
  */
@@ -358,6 +357,45 @@
 .device-mockup[data-device="iphone6_plus"][data-orientation="landscape"] > .device > .button {
 	display: block;
 	top: 43%; bottom: 43%; left: 89.9%; right: 3.2%;
+}
+
+/* iPhone X*/
+.device-mockup[data-device="iphone_x"],
+.device-mockup[data-device="iphone_x"][data-orientation="portrait"]  {
+	padding-bottom: 201.76%;
+}
+
+.device-mockup[data-device="iphone_x"][data-orientation="landscape"] {
+	padding-bottom: 49.56%;
+}
+
+.device-mockup[data-device="iphone_x"] > .device,
+.device-mockup[data-device="iphone_x"][data-color="black"] > .device,
+.device-mockup[data-device="iphone_x"][data-orientation="portrait"][data-color="black"] > .device {
+	background-image: url("iphone_x/iphone_x_black_port.png");
+}
+
+.device-mockup[data-device="iphone_x"][data-orientation="landscape"] > .device,
+.device-mockup[data-device="iphone_x"][data-orientation="landscape"][data-color="black"] > .device {
+	background-image: url("iphone_x/iphone_x_black_land.png");
+}
+
+.device-mockup[data-device="iphone_x"][data-color="white"] > .device,
+.device-mockup[data-device="iphone_x"][data-orientation="portrait"][data-color="white"] > .device {
+	background-image: url("iphone_x/iphone_x_white_port.png");
+}
+
+.device-mockup[data-device="iphone_x"][data-orientation="landscape"][data-color="white"] > .device {
+	background-image: url("iphone_x/iphone_x_white_land.png");
+}
+
+.device-mockup[data-device="iphone_x"] > .device > .screen,
+.device-mockup[data-device="iphone_x"][data-orientation="portrait"]  > .device > .screen {
+    top: 2.98%; bottom: 2.98%; left: 5.57%; right: 5.57%;
+}
+
+.device-mockup[data-device="iphone_x"][data-orientation="landscape"] > .device > .screen {
+    top: 5.97%; bottom: 5.97%; left: 3%; right: 3%;
 }
 
 /* iPad */

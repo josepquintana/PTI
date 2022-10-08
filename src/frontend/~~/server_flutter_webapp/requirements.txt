@@ -4,9 +4,9 @@ click==7.1.2
 Flask==1.1.2
 idna==2.10
 itsdangerous==1.1.0
-jinja2>=2.11.3
+Jinja2==2.11.2
 MarkupSafe==1.1.1
 pymongo==3.11.0
 requests==2.24.0
-urllib3>=1.26.5
+urllib3==1.25.10
 Werkzeug==1.0.1

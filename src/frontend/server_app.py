@@ -18,6 +18,9 @@ app.config['JSON_SORT_KEYS'] = False
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 # app.config['SERVER_NAME'] = website_url 
 
+# Set backend server IP address
+backend_srv = "10.4.41.142"
+
 #############################################################################################################################################################
 """ MAIN APP WEBSITE """
 #############################################################################################################################################################
@@ -56,13 +59,13 @@ def login():
   
 @app.route('/run/view_open_bids', methods=['GET'])
 def run_view_open_bids():  
-    res = requests.get('http://10.4.41.142/api/v1/bids/list')
+    res = requests.get('http://' + backend_srv + '/api/v1/bids/list')
     return res.text, res.status_code
 
 
 @app.route('/run/list_bid_by_id/<bid_id>', methods=['GET'])
 def run_list_bid_by_id(bid_id):  
-    res = requests.get('http://10.4.41.142/api/v1/bids/list/id/' + bid_id)
+    res = requests.get('http://' + backend_srv + '/api/v1/bids/list/id/' + bid_id)
     return res.text, res.status_code
     
   
@@ -75,19 +78,19 @@ def run_create_new_bid():
     API_KEY = request.form.get("API_KEY", type = str)
     
     pload = { 'buy_amount': buy_amount, 'buy_currency': buy_currency, 'sell_amount': sell_amount, 'sell_currency': sell_currency, 'API_KEY': API_KEY }
-    res = requests.post('http://10.4.41.142/api/v1/bids/new', data = pload)
+    res = requests.post('http://' + backend_srv + '/api/v1/bids/new', data = pload)
     return res.text, res.status_code
   
   
 @app.route('/run/block_bid/<bid_id>', methods=['GET'])
 def run_block_bid(bid_id):  
-    res = requests.get('http://10.4.41.142/api/v1/bids/block/' + bid_id)
+    res = requests.get('http://' + backend_srv + '/api/v1/bids/block/' + bid_id)
     return res.text, res.status_code
     
     
 @app.route('/run/unblock_and_delete_bid/<bid_id>', methods=['GET'])
 def run_unblock_and_delete_bid(bid_id):  
-    res = requests.get('http://10.4.41.142/api/v1/bids/unblock/' + bid_id)
+    res = requests.get('http://' + backend_srv + '/api/v1/bids/unblock/' + bid_id)
     return res.text, res.status_code
     
 
@@ -95,7 +98,7 @@ def run_unblock_and_delete_bid(bid_id):
 def run_delete_bid(bid_id):  
     API_KEY = request.form.get("API_KEY", type = str)
     pload = { 'API_KEY': API_KEY }
-    res = requests.post('http://10.4.41.142/api/v1/bids/delete/' + bid_id, data = pload)
+    res = requests.post('http://' + backend_srv + '/api/v1/bids/delete/' + bid_id, data = pload)
     return res.text, res.status_code
 
  
@@ -114,7 +117,7 @@ def run_signup():
         abort(400)
         
     pload = { "name": name, "email": email, "password": password, "repeat_password": repeat_password }
-    res = requests.post('http://10.4.41.142/api/v1/users/signup', data = pload)
+    res = requests.post('http://' + backend_srv + '/api/v1/users/signup', data = pload)
     
     # Check if signup has been successful
     if res.status_code == 201:
@@ -141,7 +144,7 @@ def run_login():
         abort(400)
         
     pload = { "email": email, "password": password }
-    res_post = requests.post('http://10.4.41.142/api/v1/users/login', data = pload)
+    res_post = requests.post('http://' + backend_srv + '/api/v1/users/login', data = pload)
     
     # Set Log In cookie
     if res_post.status_code == 200 and json.loads(res_post.text)['user'] == "authenticated":
@@ -170,7 +173,7 @@ def run_logout():
    
 @app.route('/run/get_address_from_email/<email>', methods=['GET'])
 def run_get_address_from_email(email):  
-    res = requests.get('http://10.4.41.142/api/v1/users/list/email/' + email)
+    res = requests.get('http://' + backend_srv + '/api/v1/users/list/email/' + email)
     if res.status_code == 200:
         return json.loads(res.text)['users'][0]['account'], 200
     else:
@@ -184,7 +187,7 @@ def run_get_my_user_account():
         if email is None:
             abort(401)
             
-        res = requests.get('http://10.4.41.142/api/v1/users/list/email/' + email)
+        res = requests.get('http://' + backend_srv + '/api/v1/users/list/email/' + email)
         if res.status_code == 200:
             res_json = json.loads(res.text)['users'][0]
             del res_json['password']
@@ -209,7 +212,7 @@ def is_cookie_valid():
         return False
     
     pload = { "itoken_user_email": itoken_user_email, "itoken_user_key": itoken_user_key }
-    res_post = requests.post('http://10.4.41.142/api/v1/users/login/cookie', data = pload)
+    res_post = requests.post('http://' + backend_srv + '/api/v1/users/login/cookie', data = pload)
     
     if res_post.status_code == 200 and json.loads(res_post.text)['user'] == "valid cookie":
         return True

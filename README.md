@@ -1,5 +1,15 @@
 # Projecte de Tecnologies de la Informació
 
+## Summary
+
+### Technologies Diagram
+
+![Technologies Diagram](doc/diagram_tech.png)
+
+### Transaction Operation Diagram
+
+![Transaction Operation Diagram](doc/diagram_operation.png)
+
 ## Environment
 
 ### Add SSH Key to the ssh-agent

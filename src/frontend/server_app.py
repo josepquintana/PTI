@@ -262,7 +262,7 @@ def send_welcome_mail(receiver_name, receiver_email, receiver_account, receiver_
         </html>
 		"""
 		
-    message = message.format(receiver_name, receiver_email, receiver_account, receiver_private_key, receiver_api_key, receiver_name, receiver_email)
+    message = message.format(receiver_name, receiver_email, receiver_account, receiver_private_key, receiver_api_key, frontend_srv, receiver_name, receiver_email)
 		
     mail = MIMEMultipart()
     mail['From'] = "iToken <" + email_address + ">"

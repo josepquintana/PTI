@@ -313,15 +313,23 @@
 		async function signUp(signUpForm) {
 			var xmlhttp = new XMLHttpRequest();
 			xmlhttp.onreadystatechange = function() {
-				if (this.readyState == 4 && this.status == 201) {
-					window.location.href = "/signup?success=1&name="+$("input[name='name']", signUpForm).val()+"&email="+$("input[name='email']", signUpForm).val();
-					return true;
-				}
-				if (this.readyState == 4 && this.status != 201) {
-					let res = JSON.parse(this.responseText);
-					toastr.error(res.error.code + ': ' + res.error.message, toastr_title); 
-					$('.signup form button').html('Sign Up');
-					return false;
+				if (this.readyState == 4) {
+					if (this.status == 201) {
+						window.location.href = "/signup?success=1&name="+$("input[name='name']", signUpForm).val()+"&email="+$("input[name='email']", signUpForm).val();
+						return true;
+					}
+					if (this.status == 206) {
+						let res = JSON.parse(this.responseText);
+						/* $('#submit').prop('disabled', true); // $('#submit .loader').remove() // $('#submit').text('Sign Up'); */
+						window.location.href = "/signup?success=101&name="+$("input[name='name']", signUpForm).val()+"&email="+$("input[name='email']", signUpForm).val()+"&json_data="+JSON.stringify(res);
+						return true;
+					}
+					else {
+						let res = JSON.parse(this.responseText);
+						toastr.error(res.error.code + ': ' + res.error.message, toastr_title); 
+						$('.signup form button').html('Sign Up');
+						return false;
+					}
 				}
 			};
 							
@@ -363,10 +371,18 @@
 			toastr.success('You have registered successfully', toastr_title, {timeOut: 12500, extendedTimeOut: 5000} );
 			let name = decodeURIComponent(getSearchParams('name'));
 			let email = decodeURIComponent(getSearchParams('email'));
+			showSuccessScreen(name, email);
+			
+			if (getSearchParams('success') == '101') {
+				toastr.warning('The SMTP service is unavailable... Printing to the browser console as fallback', toastr_title, {timeOut: 15000, extendedTimeOut: 7500});
+				toastr.success('Read your new credentials from the console, save them, and go to the login page', toastr_title, {timeOut: 50000, extendedTimeOut: 25000}); 
+				console.log(JSON.parse(decodeURIComponent(getSearchParams('json_data'))));
+			}
+			
 			history.replaceState && history.replaceState(null, '', location.pathname + location.search.replace(/[\?&]success=[^&]+/, '').replace(/^&/, '?'));
 			history.replaceState && history.replaceState(null, '', location.pathname + location.search.replace(/[\?&]name=[^&]+/, '').replace(/^&/, '?'));
 			history.replaceState && history.replaceState(null, '', location.pathname + location.search.replace(/[\?&]email=[^&]+/, '').replace(/^&/, '?'));
-			showSuccessScreen(name, email);
+			history.replaceState && history.replaceState(null, '', location.pathname + location.search.replace(/[\?&]json_data=[^&]+/, '').replace(/^&/, '?'));
 		}
 		
 		// Show Success Screen

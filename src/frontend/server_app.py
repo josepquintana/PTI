@@ -18,8 +18,9 @@ app.config['JSON_SORT_KEYS'] = False
 app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 # app.config['SERVER_NAME'] = website_url 
 
-# Set backend server IP address
+# Set servers IP address
 backend_srv = "10.4.41.142"
+frontend_srv = "10.4.41.181" # current Flask
 
 #############################################################################################################################################################
 """ MAIN APP WEBSITE """
@@ -246,7 +247,7 @@ def send_welcome_mail(receiver_name, receiver_email, receiver_account, receiver_
             <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#333333;line-height:25px;margin:0 0 37.5px 15px;max-width:600px"><u>Account api key:</u><br><code style="color:#757575;">{4}</code></p>
             <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#333333;line-height:25px;margin:0 0 37.5px 0;max-width:600px">Remember to keep your information private!</p>
             <p style="font-family:Arial,Helvetica,sans-serif;font-size:15px;color:#333333;line-height:25px;margin:0 0 37.5px 0;max-width:600px">You can login with your credentials by clicking the following link:</p>
-            <div style="display:block;max-width:600px;background:#a72020;padding:15px 40px 15px 40px;margin:0 0 37.5px 0;border-radius:50px;color:white;border:solid 1px black;font-size:15px;font-weight:bold;text-align:center;text-decoration:none"><a rel="noopener noreferrer" href="http://10.4.41.181/login?name={5}&email={6}" style="font-family:Helvetica,Arial,sans-serif;padding:7.5px 7.5px 7.5px 7.5px;color:white;letter-spacing:3px;vertical-align:baseline;text-decoration:none" target="_blank">ACCESS YOUR ACCOUNT</a></div>
+            <div style="display:block;max-width:600px;background:#a72020;padding:15px 40px 15px 40px;margin:0 0 37.5px 0;border-radius:50px;color:white;border:solid 1px black;font-size:15px;font-weight:bold;text-align:center;text-decoration:none"><a rel="noopener noreferrer" href="http://{5}/login?name={6}&email={7}" style="font-family:Helvetica,Arial,sans-serif;padding:7.5px 7.5px 7.5px 7.5px;color:white;letter-spacing:3px;vertical-align:baseline;text-decoration:none" target="_blank">ACCESS YOUR ACCOUNT</a></div>
             <table style="margin:0 0 37.5px 0">
                 <tbody>
                     <tr>

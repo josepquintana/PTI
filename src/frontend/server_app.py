@@ -124,10 +124,19 @@ def run_signup():
     if res.status_code == 201:
         # Send email to user with account info
         res_json = json.loads(res.text)['data']
-        if send_welcome_mail(name, res_json['email'], res_json['account'], res_json['private_key'], res_json['api_key']) is True:
-            return jsonify({ 'user': 'registered' }), 201
-        else:
-            abort(503)
+        message = prepare_welcome_mail(name, res_json['email'], res_json['account'], res_json['private_key'], res_json['api_key'])
+        try:
+            send_welcome_mail(message, name)
+            return jsonify({ 'status': 'user registered' }), 201
+        
+        except:
+            return jsonify({ 
+                'status': 'user registered',
+                'email': res_json['email'],
+                'account_address': res_json['account'],
+                'account_private_key': res_json['private_key'],
+                'api_key': res_json['api_key']
+            }), 206
         
     else:
         return res.text, res.status_code
@@ -224,16 +233,8 @@ def is_cookie_valid():
 """ SEND EMAIL """
 #############################################################################################################################################################
     
-def send_welcome_mail(receiver_name, receiver_email, receiver_account, receiver_private_key, receiver_api_key):
+def prepare_welcome_mail(receiver_name, receiver_email, receiver_account, receiver_private_key, receiver_api_key):
 
-    # Credentials [TODO: Secure]
-    email_address = "itoken@josepquintana.me"
-    email_password = "*************" 
-    
-    context = ssl.create_default_context()
-    serverSMTP = smtplib.SMTP_SSL("josepquintana.me", "465", context=context)
-    serverSMTP.login(email_address, email_password)
-	
     message = """\
         <html>
         <div id="pti-server-card" style="max-width:600px;background:#fdeddb;padding:20px;border-radius:10px">
@@ -262,7 +263,18 @@ def send_welcome_mail(receiver_name, receiver_email, receiver_account, receiver_
         </html>
 		"""
 		
-    message = message.format(receiver_name, receiver_email, receiver_account, receiver_private_key, receiver_api_key, frontend_srv, receiver_name, receiver_email)
+    return message.format(receiver_name, receiver_email, receiver_account, receiver_private_key, receiver_api_key, frontend_srv, receiver_name, receiver_email)
+    
+
+def send_welcome_mail(message, receiver_email):
+
+    # Credentials [TODO: Secure]
+    email_address = "itoken@josepquintana.me"
+    email_password = "**************" 
+    
+    context = ssl.create_default_context()
+    serverSMTP = smtplib.SMTP_SSL("josepquintana.me", "465", context=context)
+    serverSMTP.login(email_address, email_password)
 		
     mail = MIMEMultipart()
     mail['From'] = "iToken <" + email_address + ">"
@@ -359,4 +371,4 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port)	
 	
     
-    
+  

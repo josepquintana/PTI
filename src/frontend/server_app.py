@@ -227,7 +227,7 @@ def send_welcome_mail(receiver_name, receiver_email, receiver_account, receiver_
 
     # Credentials [TODO: Secure]
     email_address = "itoken@josepquintana.me"
-    email_password = "Mt6a6JeLZRESyQ3" 
+    email_password = "*************" 
     
     context = ssl.create_default_context()
     serverSMTP = smtplib.SMTP_SSL("josepquintana.me", "465", context=context)

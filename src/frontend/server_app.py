@@ -19,8 +19,10 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 # app.config['SERVER_NAME'] = website_url 
 
 # Set servers IP address
-backend_srv = "10.4.41.142"
-frontend_srv = "10.4.41.181" # current Flask
+# backend_srv = "10.4.41.142"
+backend_srv = "10.20.30.40"
+# frontend_srv = "10.4.41.181" # current Flask
+frontend_srv = "10.20.30.40:8080"
 
 #############################################################################################################################################################
 """ MAIN APP WEBSITE """
@@ -126,8 +128,10 @@ def run_signup():
         res_json = json.loads(res.text)['data']
         message = prepare_welcome_mail(name, res_json['email'], res_json['account'], res_json['private_key'], res_json['api_key'])
         try:
-            send_welcome_mail(message, name)
-            return jsonify({ 'status': 'user registered' }), 201
+            if send_welcome_mail(message, res_json['email']) is True:
+                return jsonify({ 'status': 'user registered' }), 201
+            else: 
+                raise Exception("SMTP Error")
         
         except:
             return jsonify({ 
@@ -270,7 +274,7 @@ def send_welcome_mail(message, receiver_email):
 
     # Credentials [TODO: Secure]
     email_address = "itoken@josepquintana.me"
-    email_password = "**************" 
+    email_password = "q@NvIodA[XTA" 
     
     context = ssl.create_default_context()
     serverSMTP = smtplib.SMTP_SSL("josepquintana.me", "465", context=context)
@@ -281,13 +285,14 @@ def send_welcome_mail(message, receiver_email):
     mail['To'] = receiver_email
     mail['Subject'] = "Welcome to iToken"
     mail.attach(MIMEText(message, "html"))
-	
     try:
-        serverSMTP.sendmail(mail['From'], mail['To'], mail.as_string())
-        return True
+        if serverSMTP.sendmail(mail['From'], mail['To'], mail.as_string()) is True:
+            return True
+        else: 
+            raise smtplib.SMTPException("SMTP Error")
 		
     except smtplib.SMTPException as e:
-        return str(e)
+        print("SMTP exp: " + str(e), flush=True)
 	   
     
 #############################################################################################################################################################
@@ -364,11 +369,10 @@ if __name__ == '__main__':
     from argparse import ArgumentParser
 
     parser = ArgumentParser()
-    parser.add_argument('-p', '--port', default=80, type=int, help='port to listen on')
+    parser.add_argument('-p', '--port', default=8080, type=int, help='port to listen on')
     args = parser.parse_args()
     port = args.port
 	
     app.run(host='0.0.0.0', port=port)	
 	
     
-  

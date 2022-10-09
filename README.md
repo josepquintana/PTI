@@ -74,6 +74,12 @@ View deployed contracts addresses
 truffle networks 
 ```
 
+## Interact with contracts
+
+- Upload the 'abi' files to the webserver
+- Add the user account to Metamask using the private key provided
+- Add the address of each token to Metamask
+
 ## Enter Container interactively
 
 ```

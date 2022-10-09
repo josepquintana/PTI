@@ -98,7 +98,9 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # MongoDB configuration
-mongoClient = pymongo.MongoClient("mongodb://10.4.41.142:27017")
+# database_srv = "10.4.41.142"
+database_srv = "10.20.30.40"
+mongoClient = pymongo.MongoClient("mongodb://"+database_srv+":27017")
 pti_Database = mongoClient["DB_PTI"]
 bidsCollection = pti_Database["bids"]
 usersCollection = pti_Database["users"]

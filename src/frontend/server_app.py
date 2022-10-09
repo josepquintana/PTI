@@ -126,10 +126,8 @@ def run_signup():
         res_json = json.loads(res.text)['data']
         message = prepare_welcome_mail(name, res_json['email'], res_json['account'], res_json['private_key'], res_json['api_key'])
         try:
-            if send_welcome_mail(message, res_json['email']) is True:
-                return jsonify({ 'status': 'user registered' }), 201
-            else: 
-                raise Exception("SMTP Error")
+            send_welcome_mail(message, res_json['email'])
+            return jsonify({ 'status': 'user registered' }), 201
         
         except:
             return jsonify({ 
@@ -284,13 +282,12 @@ def send_welcome_mail(message, receiver_email):
     mail['Subject'] = "Welcome to iToken"
     mail.attach(MIMEText(message, "html"))
     try:
-        if serverSMTP.sendmail(mail['From'], mail['To'], mail.as_string()) is True:
-            return True
-        else: 
-            raise smtplib.SMTPException("SMTP Error")
+        serverSMTP.sendmail(mail['From'], mail['To'], mail.as_string())
+        return True
 		
     except smtplib.SMTPException as e:
         print("SMTP exp: " + str(e), flush=True)
+        raise Exeption("SMTP Exception")
 	   
     
 #############################################################################################################################################################

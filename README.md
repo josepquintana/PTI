@@ -56,6 +56,23 @@ docker run --name pti_database -d -p 27017:27017 pti_database
 docker run --name pti_frontend -d -p 80:80 pti_frontend
 ```
 
+## Truffle Ganache Commands
+
+Install Truffle suite 
+```
+npm install -g truffle
+```
+
+Migrate contracts to the blockchain
+```
+truffle networks --clean
+truffle migrate --reset
+```
+
+View deployed contracts addresses
+```
+truffle networks 
+```
 
 ## Enter Container interactively
 
@@ -82,13 +99,6 @@ docker logs <containerName>
 docker cp <containerId>:/file/path/within/container /host/path/target
 ```
 
-## Truffle Ganache Commands
-
-```
-truffle compile
-truffle networks --clean
-truffle migrate -f X --to Y
-```
 
 ## Flutter WebApp
 

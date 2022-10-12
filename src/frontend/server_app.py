@@ -298,23 +298,23 @@ def send_welcome_mail(message, receiver_email):
     
 @app.route('/files/abis/BarnaToken.json', methods=['GET'])
 def files_BarnaToken():
-    return send_from_directory("abis", "BarnaToken.json")
+    return send_from_directory("files/abis", "BarnaToken.json")
     
 @app.route('/files/abis/FiberToken.json', methods=['GET'])
 def files_FiberToken():
-    return send_from_directory("abis", "FiberToken.json")
+    return send_from_directory("files/abis", "FiberToken.json")
 
 @app.route('/files/abis/UpcToken.json', methods=['GET'])
 def files_UpcToken():
-    return send_from_directory("abis", "UpcToken.json")
+    return send_from_directory("files/abis", "UpcToken.json")
     
 @app.route('/files/abis/CatToken.json', methods=['GET'])
 def files_CatToken():
-    return send_from_directory("abis", "CatToken.json")
+    return send_from_directory("files/abis", "CatToken.json")
     
 @app.route('/files/abis/Escrow.json', methods=['GET'])
 def files_Escrow():
-    return send_from_directory("abis", "Escrow.json")
+    return send_from_directory("files/abis", "Escrow.json")
     
 #############################################################################################################################################################
 """ TEST ROUTE """

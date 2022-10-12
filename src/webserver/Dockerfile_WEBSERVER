@@ -18,6 +18,7 @@ COPY ./blockchain/abis/BarnaToken.json files/abis/
 COPY ./blockchain/abis/FiberToken.json files/abis/
 COPY ./blockchain/abis/UpcToken.json files/abis/
 COPY ./blockchain/abis/CatToken.json files/abis/
+COPY ./blockchain/abis/Escrow.json files/abis/
 
 # Dependencies
 RUN DEBIAN_FRONTEND=noninteractive pip3.9 install -q -r requirements.txt

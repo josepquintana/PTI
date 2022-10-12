@@ -12,12 +12,12 @@ COPY ./frontend/requirements.txt .
 RUN DEBIAN_FRONTEND=noninteractive pip3.9 install -q -r requirements.txt
 
 # Copy the compiled smart contracts
-RUN mkdir -p abis/
-COPY ./frontend/abis/BarnaToken.json abis/
-COPY ./frontend/abis/FiberToken.json abis/
-COPY ./frontend/abis/UpcToken.json abis/
-COPY ./frontend/abis/CatToken.json abis/
-COPY ./frontend/abis/Escrow.json abis/
+RUN mkdir -p files/abis/
+COPY ./blockchain/abis/BarnaToken.json files/abis/
+COPY ./blockchain/abis/FiberToken.json files/abis/
+COPY ./blockchain/abis/UpcToken.json files/abis/
+COPY ./blockchain/abis/CatToken.json files/abis/
+COPY ./blockchain/abis/Escrow.json files/abis/
 
 # Get the necessary files
 COPY ./frontend/server_app.py .

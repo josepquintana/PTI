@@ -673,6 +673,9 @@ def files_UpcToken():
 def files_CatToken():
     return send_from_directory("files/abis", "CatToken.json")
 
+@app.route('/files/abis/Escrow.json', methods=['GET'])
+def files_Escrow():
+    return send_from_directory("files/abis", "Escrow.json")
 
 #############################################################################################################################################################
 """ AUX FUNCTIONS """

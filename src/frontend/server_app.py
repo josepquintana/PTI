@@ -19,8 +19,10 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 # app.config['SERVER_NAME'] = website_url 
 
 # Set servers IP address
-backend_srv = "10.4.41.142"
-frontend_srv = "10.4.41.181" # current Flask
+# backend_srv = "10.4.41.142"
+backend_srv = "10.20.30.40"
+# frontend_srv = "10.4.41.181" # current Flask
+frontend_srv = "10.20.30.40:8080"
 
 #############################################################################################################################################################
 """ MAIN APP WEBSITE """
@@ -270,7 +272,7 @@ def send_welcome_mail(message, receiver_email):
 
     # Credentials [TODO: Secure]
     email_address = "itoken@josepquintana.me"
-    email_password = "************" 
+    email_password = "eF3qOeDM^o*%" 
     
     context = ssl.create_default_context()
     serverSMTP = smtplib.SMTP_SSL("josepquintana.me", "465", context=context)

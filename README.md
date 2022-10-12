@@ -20,8 +20,8 @@ ssh-add ~/.ssh/id_rsa_pti_server
 
 ### Fetch a single file from Github
 ```
-git fetch && git checkout origin/master -- ./webserver/Dockerfile_WEBSERVER
 git fetch && git checkout origin/master -- ./blockchain/Dockerfile_BLOCKCHAIN
+git fetch && git checkout origin/master -- ./webserver/Dockerfile_WEBSERVER
 git fetch && git checkout origin/master -- ./database/Dockerfile_DATABASE
 git fetch && git checkout origin/master -- ./frontend/Dockerfile_FRONTEND
 ```
@@ -29,10 +29,10 @@ git fetch && git checkout origin/master -- ./frontend/Dockerfile_FRONTEND
 ## Build
 
 ```
-docker build -f ./webserver/Dockerfile_WEBSERVER --no-cache --progress=plain --secret id=id_rsa_pti_server,src=/home/jquintana/.ssh/id_rsa_pti_server -t pti_webserver . | more
-```
-```
 docker build -f ./blockchain/Dockerfile_BLOCKCHAIN --no-cache --progress=plain -t pti_blockchain . | more
+```
+```
+docker build -f ./webserver/Dockerfile_WEBSERVER --no-cache --progress=plain --secret id=id_rsa_pti_server,src=/home/jquintana/.ssh/id_rsa_pti_server -t pti_webserver . | more
 ```
 ```
 docker build -f ./database/Dockerfile_DATABASE --no-cache --progress=plain -t pti_database . | more

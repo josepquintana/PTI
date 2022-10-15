@@ -22,11 +22,12 @@ bidsCollection.drop()
 # Create a Unique Compound Index for all the field to avoid having duplicate bids
 bidsCollection.create_index([("owner", 1), ("buy_amount", 1), ("buy_currency", 1), ("sell_amount", 1), ("sell_currency", 1)], unique=True)
 
+# WARNING: These bids are not in Escrow
 newBids = [
-    { "owner": "josep.quintana.torres@estudiantat.upc.edu", "buy_amount": 100, "buy_currency": "FBC", "sell_amount": 400, "sell_currency": "CTC", "blocked": 0 },
-    { "owner": "josep.quintana.torres@estudiantat.upc.edu", "buy_amount": 200, "buy_currency": "BNC", "sell_amount": 300, "sell_currency": "FBC", "blocked": 0 },
-    { "owner": "josep.quintana.torres@estudiantat.upc.edu", "buy_amount": 300, "buy_currency": "UPC", "sell_amount": 200, "sell_currency": "BNC", "blocked": 0 },
-    { "owner": "josep.quintana.torres@estudiantat.upc.edu", "buy_amount": 400, "buy_currency": "CTC", "sell_amount": 100, "sell_currency": "UPC", "blocked": 0 }
+    { "owner": "itoken@josepquintana.me", "buy_amount": 100, "buy_currency": "FBC", "sell_amount": 400, "sell_currency": "CTC", "blocked": 0 },
+    { "owner": "itoken@josepquintana.me", "buy_amount": 200, "buy_currency": "BNC", "sell_amount": 300, "sell_currency": "FBC", "blocked": 0 },
+    { "owner": "itoken@josepquintana.me", "buy_amount": 300, "buy_currency": "UPC", "sell_amount": 200, "sell_currency": "BNC", "blocked": 0 },
+    { "owner": "itoken@josepquintana.me", "buy_amount": 400, "buy_currency": "CTC", "sell_amount": 100, "sell_currency": "UPC", "blocked": 0 }
 ]
 
 x = bidsCollection.insert_many(newBids)

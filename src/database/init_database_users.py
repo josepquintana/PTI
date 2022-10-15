@@ -23,10 +23,10 @@ usersCollection.drop()
 # Create a Unique Compound Index for all the field to avoid having duplicate users
 usersCollection.create_index([("email", 1)], unique=True)
 
-new_password = "qwertyuiop";
+new_password = "qwertyuiop"; # dummy password
 hashed_new_password = hashlib.sha256(new_password.encode('utf-8')).hexdigest()
 users = [
-    { "email": "josep.quintana.torres@estudiantat.upc.edu", "password": hashed_new_password, "account": "0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1", "api_key": "00000000" }
+    { "email": "itoken@josepquintana.me", "password": hashed_new_password, "account": "0x90F8bf6A479f320ead074411a4B0e7944Ea8c9C1", "api_key": "00000000" }
 ]
 
 x = usersCollection.insert_many(users)

@@ -10,99 +10,112 @@
 
 ![Transaction Operation Diagram](doc/diagram_operation.png)
 
-## Environment
+### Demo Operation
 
-### Add SSH Key to the ssh-agent
-```
-eval $(ssh-agent -s)
-ssh-add ~/.ssh/id_rsa_pti_server
-```
 
-### Fetch a single file from Github
+
+## Build and Run
+
+Enter the working folder and set the variables with the corresponding IP addresses of each machine in the scripts
 ```
-git fetch && git checkout origin/master -- ./blockchain/Dockerfile_BLOCKCHAIN
-git fetch && git checkout origin/master -- ./webserver/Dockerfile_WEBSERVER
-git fetch && git checkout origin/master -- ./database/Dockerfile_DATABASE
-git fetch && git checkout origin/master -- ./frontend/Dockerfile_FRONTEND
+cd ./src/
 ```
 
-## Build
-
+Build and run the blockchain service from a docker container
 ```
 docker build -f ./blockchain/Dockerfile_BLOCKCHAIN --no-cache --progress=plain -t pti_blockchain . | more
-```
-```
-docker build -f ./webserver/Dockerfile_WEBSERVER --no-cache --progress=plain --secret id=id_rsa_pti_server,src=/home/jquintana/.ssh/id_rsa_pti_server -t pti_webserver . | more
-```
-```
-docker build -f ./database/Dockerfile_DATABASE --no-cache --progress=plain -t pti_database . | more
-```
-```
-docker build -f ./frontend/Dockerfile_FRONTEND --no-cache --progress=plain -t pti_frontend . | more
-```
-
-## Run
-
-```
-docker run --name pti_webserver -d -p 80:80 pti_webserver
-```
-```
 docker run --name pti_blockchain -d -p 8545:8545 pti_blockchain
 ```
-```
-docker run --name pti_database -d -p 27017:27017 pti_database
-```
-```
-docker run --name pti_frontend -d -p 80:80 pti_frontend
-```
-
-## Truffle Ganache Commands
 
 Install Truffle suite 
 ```
 npm install -g truffle
 ```
 
-Migrate contracts to the blockchain
+Migrate contracts to the blockchain (from the './src/blockchain/' directory where the 'truffle-config.js' file is located)
 ```
 truffle networks --clean
 truffle migrate --reset
 ```
 
-View deployed contracts addresses
+View the deployed contracts addresses
 ```
 truffle networks 
 ```
 
-## Interact with contracts
+Build and run the database from a docker container
+```
+docker build -f ./database/Dockerfile_DATABASE --no-cache --progress=plain -t pti_database . | more
+docker run --name pti_database -d -p 27017:27017 pti_database
+```
 
-- Upload the 'abi' files to the webserver
-- Add the user account to Metamask using the private key provided
-- Add the address of each token to Metamask
+Fill the database with the initial content (blockchain accounts and default username and password)
+```
+python3 ./database/init_database_accounts.py
+python3 ./database/init_database_users.py
+```
 
-## Enter Container interactively
+Build and run the webserver (backend) from a docker container
+```
+docker build -f ./webserver/Dockerfile_WEBSERVER --no-cache --progress=plain -t pti_webserver . | more
+docker run --name pti_webserver -d -p 80:80 pti_webserver
+```
 
+Build and run the frontend app from a docker container (If necessary change the running port in the command, Dockerfile and server_app.py script)
+```
+docker build -f ./frontend/Dockerfile_FRONTEND --no-cache --progress=plain -t pti_frontend . | more
+docker run --name pti_frontend -d -p 80:80 pti_frontend
+```
+
+View the 10 accounts (and private keys) configured in the blockchain and the database ([View the file](./src/blockchain/ganache_accounts.json))
+```
+cat ./blockchain/ganache_accounts.json
+```
+
+Import account to Metamask extension using the account private key 
+
+Import the four working Tokens to the Metamask account using the compiled contract addresses ([View the file](./src/blockchain/SmartContract_Addresses.md))
+
+Finally... explore the application!
+
+
+## Useful commands
+
+Enter Docker container interactively
 ```
 docker run -it --entrypoint bash <containerName>
 ```
 
-## Stop and Remove Container
-
+Stop and Remove Docker container
 ```
 docker stop <containerName>
 docker rm <containerName>
 ```
 
-## Check Docker logs
-
+Check Docker logs
 ```
 docker logs <containerName>
 ```
 
-## Copy from docker container to host
-
+Copy from Docker container to host
 ```
 docker cp <containerId>:/file/path/within/container /host/path/target
+```
+
+Add SSH Key to the ssh-agent
+```
+eval $(ssh-agent -s)
+ssh-add ~/.ssh/id_rsa_pti_server
+```
+
+Fetch a single file from Github
+```
+git fetch && git checkout origin/master -- ./src/blockchain/Dockerfile_BLOCKCHAIN
+```
+
+Build a docker container that will fetch from github using ssh
+```
+docker build -f ./webserver/Dockerfile_WEBSERVER --no-cache --progress=plain --secret id=id_rsa_pti_server,src=/home/jquintana/.ssh/id_rsa_pti_server -t pti_webserver . | more
 ```
 
 
@@ -118,6 +131,7 @@ flutter devices
 flutter create .
 flutter build web
 ```
+
 
 ## Authors
 
@@ -138,6 +152,7 @@ flutter build web
 - [x] Think how will user_2 approve SELL
 - [x] Escrow.sol
 - [x] User management
+- [ ] Frontend detect if metamask account doesn't match user assigned in DB
 - [ ] Flutter
 - [ ] Use Docker Hub
 - [ ] IPFS

@@ -12,7 +12,7 @@
 
 ### Demo Operation
 
-
+![Demo video](doc/demo.mp4)
 
 ## Build and Run
 

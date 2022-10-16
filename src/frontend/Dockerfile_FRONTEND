@@ -32,4 +32,4 @@ COPY ./frontend/www/favicon.ico www/
 # Start the server command
 RUN echo "Ready to start frontend"
 EXPOSE 80
-CMD ["python3.9", "./server_app.py", "-p", "8080"]
+CMD ["python3.9", "./server_app.py", "-p", "80"]

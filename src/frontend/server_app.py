@@ -19,10 +19,8 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 # app.config['SERVER_NAME'] = website_url 
 
 # Set servers IP address
-# backend_srv = "10.4.41.142"
-backend_srv = "10.20.30.40"
-# frontend_srv = "10.4.41.181" # current Flask
-frontend_srv = "10.20.30.40:8080"
+backend_srv = "10.4.41.142"
+frontend_srv = "10.4.41.181" # current Flask
 
 #############################################################################################################################################################
 """ MAIN APP WEBSITE """

@@ -23236,28 +23236,14 @@
   },
   "networks": {
     "5777": {
-      "events": {
-        "0x8efe4fdb8cb27e356cc25ada05cc714d6bbdb24500e23de99f75873c4bc18c77": {
-          "anonymous": false,
-          "inputs": [
-            {
-              "indexed": false,
-              "internalType": "address",
-              "name": "escrowAddress",
-              "type": "address"
-            }
-          ],
-          "name": "EscrowInit",
-          "type": "event"
-        }
-      },
+      "events": {},
       "links": {},
-      "address": "0xACF05e2a9b757e70C2900432c9b4E08Fdc54dD53",
-      "transactionHash": "0x6f1238ca3c2265dcc14fabc16b17cf2b1bf17d6b2da6bad936363db750b077f1"
+      "address": "0x630589690929E9cdEFDeF0734717a9eF3Ec7Fcfe",
+      "transactionHash": "0x28110f175b58282199960bc03acd210264a3653dcf3927558664a4b0d707be1a"
     }
   },
   "schemaVersion": "3.4.10",
-  "updatedAt": "2022-10-09T15:42:27.301Z",
+  "updatedAt": "2022-10-16T10:40:59.653Z",
   "networkType": "ethereum",
   "devdoc": {
     "methods": {}

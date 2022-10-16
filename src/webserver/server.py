@@ -98,8 +98,7 @@ app.config['JSONIFY_PRETTYPRINT_REGULAR'] = False
 cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 # MongoDB configuration
-# database_srv = "10.4.41.142"
-database_srv = "10.20.30.40"
+database_srv = "10.4.41.142"
 mongoClient = pymongo.MongoClient("mongodb://"+database_srv+":27017")
 pti_Database = mongoClient["DB_PTI"]
 bidsCollection = pti_Database["bids"]
@@ -620,39 +619,6 @@ def info():
 	
     return jsonify(response), 200
 
-
-@app.route('/info/ip', methods=['GET'])
-def ip():
-
-	pload = {"requested_with": "xmlhttprequest", "lang": request.args.get("lang", default = "en", type = str)}
-	req = requests.post('https://josepquintana.me/ip-tool/run.php', headers = {"referer": "https://josepquintana.me/"}, data = pload)
-	if req.status_code == 200:
-		response = req.json()
-	else:
-		response = { 'error': 'Service unavailable' }
-
-	return jsonify(response), 200
-
-
-@app.route('/info/weather', methods=['GET'])
-def weather():
-	pload1 = {"requested_with": "xmlhttprequest", "lang": request.args.get("lang", default = "en", type = str)}
-	req1 = requests.post('https://josepquintana.me/ip-tool/run.php', headers = {"referer": "https://josepquintana.me/"}, data = pload1)
-	if req1.status_code == 200:
-		pload2 = {"requested_with": "xmlhttprequest", "lat": req1.json()['lat'], "lon": req1.json()['lon'], "lang": request.args.get("lang", default = "en", type = str)}
-		req2 = requests.post('https://josepquintana.me/weather-tool/run.php', headers = {"referer": "https://josepquintana.me/"}, data = pload2)
-		
-		if req2.status_code == 200:
-			response = req2.json()
-		else:
-			response = { 'error': 'Service 2 unavailable' }
-		
-	else:
-		response = { 'error': 'Service 1 unavailable' }
-
-	return jsonify(response), 200
-	
-
 #############################################################################################################################################################
 """ SERVE STATIC FILES """
 #############################################################################################################################################################
@@ -830,27 +796,5 @@ if __name__ == '__main__':
     app.run(host='0.0.0.0', port=port)
 	
 	
-    
-#############################################################################################################################################################
-#############################################################################################################################################################
-"""
-
-
-@app.route('/success/<name>')
-def success(name):
-   return 'welcome %s' % name
-
-@app.route('/login',methods = ['POST', 'GET'])
-def login():
-   if request.method == 'POST':
-      user = request.form['nm']
-      return redirect(url_for('success',name = user))
-   else:
-      user = request.args.get('nm')
-      return redirect(url_for('success',name = user))
-      
-  
-	
-"""	
 #############################################################################################################################################################
 #############################################################################################################################################################

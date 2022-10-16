@@ -32,13 +32,7 @@ Install Truffle suite
 npm install -g truffle
 ```
 
-Migrate contracts to the blockchain (from the './src/blockchain/' directory where the 'truffle-config.js' file is located)
-```
-truffle networks --clean
-truffle migrate --reset
-```
-
-View the deployed contracts addresses
+View the deployed contracts addresses (not necessary to compilate 'abis' again)
 ```
 truffle networks 
 ```
@@ -80,6 +74,13 @@ Finally... explore the application!
 
 
 ## Useful commands
+
+
+Migrate contracts to the blockchain (from the './src/blockchain/' directory where the 'truffle-config.js' file is located)
+```
+truffle networks --clean
+truffle migrate --reset
+```
 
 Enter Docker container interactively
 ```

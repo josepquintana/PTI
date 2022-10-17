@@ -4,11 +4,11 @@
 
 ### Technologies Diagram
 
-<img src="doc/diagram_tech.png" width="800" />
+<img src="doc/diagram_tech.png" width="600" />
 
 ### Transaction Operation Diagram
 
-<img src="doc/diagram_operation.png" width="800" />
+<img src="doc/diagram_operation.png" width="600" />
 
 ### Demo Operation
 

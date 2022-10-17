@@ -4,18 +4,15 @@
 
 ### Technologies Diagram
 
-![Technologies Diagram](doc/diagram_tech.png)
-<img src="doc/diagram_tech.png" width="600" />
+<img src="doc/diagram_tech.png" width="800" />
 
 ### Transaction Operation Diagram
 
-![Transaction Operation Diagram](doc/diagram_operation.png)
-<img src="doc/diagram_operation.png" width="600" />
+<img src="doc/diagram_operation.png" width="800" />
 
 ### Demo Operation
 
-![Demo video](doc/demo.gif)
-[![Demo Video](doc/demo.gif)](doc/demo.mp4)
+https://user-images.githubusercontent.com/22714366/196254183-c69b154e-46b4-485b-b2b2-693523159c6e.mp4
 
 ## Build and Run
 

@@ -3,7 +3,7 @@
 ## Summary
 
 Technologies Diagram | Transaction Operation Diagram
-:-------------------:|:-------------------------:
+-|-
 ![Technologies Diagram](doc/diagram_tech.png) | ![Transaction Operation Diagram](doc/diagram_operation.png)
 
 ### Technologies Diagram

@@ -4,15 +4,18 @@
 
 ### Technologies Diagram
 
-![Technologies Diagram](doc/diagram_tech.png =250x)
+![Technologies Diagram](doc/diagram_tech.png)
+<img src="doc/diagram_tech.png" width="200" />
 
 ### Transaction Operation Diagram
 
-![Transaction Operation Diagram](doc/diagram_operation.png =250x)
+![Transaction Operation Diagram](doc/diagram_operation.png)
+<img src="doc/diagram_operation.png" width="200" />
 
 ### Demo Operation
 
 ![Demo video](doc/demo.gif)
+https://github.com/josepquintana/PTI/blob/master/doc/demo.mp4?raw=true
 
 ## Build and Run
 

@@ -2,15 +2,13 @@
 
 ## Summary
 
-![Technologies Diagram](doc/diagram_tech.png)  ![Transaction Operation Diagram](doc/diagram_operation.png)
-
 ### Technologies Diagram
 
-![Technologies Diagram](doc/diagram_tech.png)
+![Technologies Diagram](doc/diagram_tech.png =250x)
 
 ### Transaction Operation Diagram
 
-![Transaction Operation Diagram](doc/diagram_operation.png)
+![Transaction Operation Diagram](doc/diagram_operation.png =250x)
 
 ### Demo Operation
 

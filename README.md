@@ -12,7 +12,7 @@
 
 ### Demo Operation
 
-https://user-images.githubusercontent.com/22714366/196254183-c69b154e-46b4-485b-b2b2-693523159c6e.mp4
+[![Demo Video](doc/demo.gif)](https://user-images.githubusercontent.com/22714366/196254183-c69b154e-46b4-485b-b2b2-693523159c6e.mp4)
 
 ## Build and Run
 
